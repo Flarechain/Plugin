@@ -3,7 +3,7 @@ cmake-build-*
 build/
 Builds/
 
-# IDE stuff
+# IDE and OS
 .vscode/
 .idea/
 .DS_Store

@@ -24,23 +24,24 @@ CPMAddPackage(
 )
 
 set(SourceFiles
-        Source/PluginEditor.cpp
-        Source/PluginEditor.h
-        Source/PluginProcessor.cpp
-        Source/PluginProcessor.h
+        src/PluginEditor.cpp
+        src/PluginEditor.h
+        src/PluginProcessor.cpp
+        src/PluginProcessor.h
 )
 
 juce_add_plugin(${PROJECT_NAME}
-        COMPANY_NAME dennisbattisti
-        IS_SYNTH FALSE
+        COMPANY_NAME "Dennis Battisti"
+        IS_SYNTH TRUE
         NEEDS_MIDI_INPUT TRUE
         NEEDS_MIDI_OUTPUT TRUE
-        IS_MIDI_EFFECT FALSE
+        IS_MIDI_EFFECT TRUE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
         COPY_PLUGIN_AFTER_BUILD TRUE
         PLUGIN_MANUFACTURER_CODE Deba
         PLUGIN_CODE Flar
         PRODUCT_NAME "Flarechain"
+        BUNDLE_ID "com.dennisbattisti.flarechain"
         FORMATS VST3 AU Standalone
 )
 
