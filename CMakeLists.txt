@@ -23,11 +23,12 @@ CPMAddPackage(
         GIT_TAG 8.0.10
 )
 
+file(GLOB PluginCoreFiles src/plugin_core/*)
+file(GLOB_RECURSE GuiComponentsFiles src/gui_components/*)
+list(FILTER GuiComponentsFiles EXCLUDE REGEX ".*\\.DS_Store$")
 set(SourceFiles
-        src/PluginEditor.cpp
-        src/PluginEditor.h
-        src/PluginProcessor.cpp
-        src/PluginProcessor.h
+        ${PluginCoreFiles}
+        ${GuiComponentsFiles}
 )
 
 juce_add_plugin(${PROJECT_NAME}
@@ -44,6 +45,15 @@ juce_add_plugin(${PROJECT_NAME}
         BUNDLE_ID "com.dennisbattisti.flarechain"
         FORMATS VST3 AU Standalone
 )
+
+# Collect all assets files
+file(GLOB_RECURSE AssetFiles ${CMAKE_SOURCE_DIR}/assets/*)
+list(FILTER AssetFiles EXCLUDE REGEX ".*\\.DS_Store$")
+message(AssetFiles: ${AssetFiles})
+
+# Use assets files as embedded binary data
+juce_add_binary_data(AssetsData SOURCES ${AssetFiles})
+target_link_libraries(${PROJECT_NAME} PRIVATE AssetsData)
 
 # Appearance of source files inside IDE
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SourceFiles})

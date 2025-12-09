@@ -134,7 +134,7 @@ bool FlarechainAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* FlarechainAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor (*this);
+    return new FlarechainAudioProcessorEditor (*this);
 }
 
 //==============================================================================

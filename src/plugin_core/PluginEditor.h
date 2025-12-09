@@ -2,12 +2,14 @@
 
 #include "PluginProcessor.h"
 
+#include "../gui_components/RecordButton.h"
+
 //==============================================================================
-class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
+class FlarechainAudioProcessorEditor final : public juce::AudioProcessorEditor
 {
 public:
-    explicit AudioPluginAudioProcessorEditor (FlarechainAudioProcessor&);
-    ~AudioPluginAudioProcessorEditor() override;
+    explicit FlarechainAudioProcessorEditor (FlarechainAudioProcessor&);
+    ~FlarechainAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -18,5 +20,7 @@ private:
     // access the processor object that created it.
     FlarechainAudioProcessor& processorRef;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
+    RecordButton record_button;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };
