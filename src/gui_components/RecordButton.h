@@ -13,5 +13,7 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RecordButton)
+
     std::unique_ptr<juce::Drawable> icon;
+    bool is_recording;
 };
