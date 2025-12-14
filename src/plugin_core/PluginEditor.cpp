@@ -9,6 +9,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     : AudioProcessorEditor (&p), processorRef (p)
 {
     addAndMakeVisible(record_button);
+    record_button.record();
 
     juce::ignoreUnused (processorRef);
     setSize (800, 600);
