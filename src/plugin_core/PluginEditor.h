@@ -22,6 +22,8 @@ private:
 
     RecordButton record_button;
     PlayButton play_button;
+    PlaybackControl playback_control;
+    double progress;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };

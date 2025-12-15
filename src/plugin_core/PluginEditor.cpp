@@ -4,14 +4,15 @@
 
 //==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p)
+    : AudioProcessorEditor(&p), processorRef(p)
 {
     addAndMakeVisible(record_button);
     addAndMakeVisible(play_button);
+    addAndMakeVisible(playback_control);
     record_button.record();
 
-    juce::ignoreUnused (processorRef);
-    setSize (800, 600);
+    juce::ignoreUnused(processorRef);
+    setSize(800, 600);
 }
 
 FlarechainAudioProcessorEditor::~FlarechainAudioProcessorEditor()
@@ -30,4 +31,5 @@ void FlarechainAudioProcessorEditor::resized()
 {
     record_button.setTopLeftPosition(100, 160);
     play_button.setTopLeftPosition(100, 240);
+    playback_control.setBounds(100, 320, 288, 22);
 }
