@@ -4,3 +4,4 @@
 #include "PlayButton.h"
 #include "PlaybackBar.h"
 #include "PlaybackControl.h"
+#include "MoreOptionsButton.h"

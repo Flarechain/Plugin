@@ -1,14 +1,13 @@
-#include "PlayButton.h"
+#include "MoreOptionsButton.h"
 #include "palettes/Palette.h"
 
-PlayButton::PlayButton() : Button("PLAY")
+MoreOptionsButton::MoreOptionsButton() : Button("MORE OPTIONS")
 {
-    is_playing = false;
-    icon = IconPalette::Play(8, ColorPalette::Coffee500);
+    icon = IconPalette::MoreOptions(3, ColorPalette::Coffee500);
     setSize(22, 22);
 }
 
-void PlayButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void MoreOptionsButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;
@@ -19,8 +18,8 @@ void PlayButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isB
     g.setColour(fill_color);
     g.fillEllipse(0, 0, static_cast<float>(getWidth()), static_cast<float>(getHeight()));
 
-    // icon position. Optical correction: icon centered but moved to right by 1px
-    const auto content_bounds = getLocalBounds().translated(1, 0);
+    // icon position
+    const auto content_bounds = getLocalBounds();
     icon->drawWithin(g,
         content_bounds.toFloat(),
         juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize,
@@ -28,7 +27,4 @@ void PlayButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isB
     );
 }
 
-void PlayButton::play()
-{
-    is_playing = true;
-}
+// TODO: open popup on click

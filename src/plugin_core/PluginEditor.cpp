@@ -9,6 +9,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     addAndMakeVisible(record_button);
     addAndMakeVisible(play_button);
     addAndMakeVisible(playback_control);
+    addAndMakeVisible(more_options_button);
     record_button.record();
 
     juce::ignoreUnused(processorRef);
@@ -31,5 +32,6 @@ void FlarechainAudioProcessorEditor::resized()
 {
     record_button.setTopLeftPosition(100, 160);
     play_button.setTopLeftPosition(100, 240);
-    playback_control.setBounds(100, 320, 288, 22);
+    playback_control.setTopLeftPosition(100, 320);
+    more_options_button.setTopLeftPosition(100, 400);
 }
