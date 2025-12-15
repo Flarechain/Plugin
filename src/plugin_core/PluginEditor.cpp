@@ -2,13 +2,12 @@
 #include "PluginEditor.h"
 #include "BinaryData.h"
 
-juce::String assets_path = "assets/";
-
 //==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p)
 {
     addAndMakeVisible(record_button);
+    addAndMakeVisible(play_button);
     record_button.record();
 
     juce::ignoreUnused (processorRef);
@@ -30,4 +29,5 @@ void FlarechainAudioProcessorEditor::paint (juce::Graphics& g)
 void FlarechainAudioProcessorEditor::resized()
 {
     record_button.setTopLeftPosition(100, 160);
+    play_button.setTopLeftPosition(100, 240);
 }

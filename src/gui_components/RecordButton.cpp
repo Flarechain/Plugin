@@ -3,8 +3,8 @@
 
 RecordButton::RecordButton() : Button("RECORD")
 {
-    icon = IconPalette::Record(6, ColorPalette::Coffee500);
     is_recording = false;
+    icon = IconPalette::Record(6, ColorPalette::Coffee500);
     setSize(86, 24);
 }
 

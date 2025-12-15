@@ -81,8 +81,14 @@ void IconPalette::recolor(juce::Drawable* icon, const juce::Colour& color)
 
 void IconPalette::resize(juce::Drawable* icon, const int size)
 {
-    const auto originalBounds = icon->getDrawableBounds();
-    const float scale = static_cast<float>(size) / originalBounds.getHeight();
+    const float old_width = icon->getDrawableBounds().getWidth();   // icon old width
+    const float old_height = icon->getDrawableBounds().getHeight(); // icon old height
+    const float scale = static_cast<float>(size) / old_height;
+    const float new_width = old_width * scale;      // icon new width
+    const float new_height = old_height * scale;    // icon new height
     icon->setTransform(juce::AffineTransform::scale(scale, scale));
-    icon->setBounds(0, 0, size, size);
+
+    const int bounds_width = static_cast<int>(std::ceil(new_width));    // icon bounds new width
+    const int bounds_height = static_cast<int>(std::ceil(new_height));  // icon bounds new height
+    icon->setBounds(0, 0, bounds_width, bounds_height);
 }

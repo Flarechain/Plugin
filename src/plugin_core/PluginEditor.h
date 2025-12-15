@@ -2,7 +2,7 @@
 
 #include "PluginProcessor.h"
 
-#include "../gui_components/RecordButton.h"
+#include "../gui_components/Components.h"
 
 //==============================================================================
 class FlarechainAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -21,6 +21,7 @@ private:
     FlarechainAudioProcessor& processorRef;
 
     RecordButton record_button;
+    PlayButton play_button;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };
