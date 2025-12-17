@@ -2,7 +2,6 @@
 #include "BinaryData.h"
 
 // TODO: docs
-// TODO: remove font anti-aliasing that makes text bolder
 
 std::unique_ptr<juce::Drawable> IconPalette::Arrow(const int size, const juce::Colour color)
 {

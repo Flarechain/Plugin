@@ -8,7 +8,7 @@ RecordButton::RecordButton() : Button("RECORD")
     setSize(86, 24);
 }
 
-void RecordButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void RecordButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;

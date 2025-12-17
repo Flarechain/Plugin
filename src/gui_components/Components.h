@@ -5,3 +5,4 @@
 #include "PlaybackBar.h"
 #include "PlaybackControl.h"
 #include "MoreOptionsButton.h"
+#include "PatternView.h"

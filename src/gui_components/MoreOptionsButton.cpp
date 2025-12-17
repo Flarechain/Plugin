@@ -4,7 +4,7 @@
 MoreOptionsButton::MoreOptionsButton() : Button("MORE OPTIONS")
 {
     icon = IconPalette::MoreOptions(3, ColorPalette::Coffee500);
-    setSize(22, 22);
+    setSize(24, 24);
 }
 
 void MoreOptionsButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)

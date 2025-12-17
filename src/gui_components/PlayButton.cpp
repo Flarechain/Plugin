@@ -8,7 +8,7 @@ PlayButton::PlayButton() : Button("PLAY")
     setSize(22, 22);
 }
 
-void PlayButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void PlayButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;

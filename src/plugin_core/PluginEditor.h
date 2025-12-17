@@ -20,11 +20,7 @@ private:
     // access the processor object that created it.
     FlarechainAudioProcessor& processorRef;
 
-    RecordButton record_button;
-    PlayButton play_button;
-    PlaybackControl playback_control;
-    double progress;
-    MoreOptionsButton more_options_button;
+    PatternView pattern_view;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };
