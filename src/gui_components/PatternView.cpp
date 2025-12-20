@@ -1,15 +1,16 @@
 #include "PatternView.h"
 #include "palettes/Palette.h"
 
-PatternView::PatternView()
+PatternView::PatternView(const Pattern& pattern) : pattern(pattern)
 {
     const auto font = FontPalette::Text_L_Semibold;
-    const auto text = "Pattern A";
+    const char pattern_name = static_cast<char>('A' + (pattern.get_id() % 26));
+    const auto text = juce::String("Pattern ") + pattern_name;
     pattern_label.setText(text, juce::dontSendNotification);
     pattern_label.setFont(font);
     pattern_label.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
     pattern_label.setSize(100, static_cast<int>(font.getHeight()));
-    pattern_label.setMinimumHorizontalScale(1.0f);  // disable font stretching
+    pattern_label.setMinimumHorizontalScale(1.0f); // disable font stretching
 
     addAndMakeVisible(pattern_label);
     addAndMakeVisible(record_button);
@@ -17,7 +18,8 @@ PatternView::PatternView()
     addAndMakeVisible(playback_control);
 
     constexpr int gap = 8;
-    const int top_row_height = std::max(pattern_label.getHeight(), std::max(record_button.getHeight(), more_options_button.getHeight()));
+    const int top_row_height = std::max(pattern_label.getHeight(),
+                                        std::max(record_button.getHeight(), more_options_button.getHeight()));
     setSize(playback_control.getWidth(), top_row_height + gap + playback_control.getHeight());
 }
 

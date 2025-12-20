@@ -1,16 +1,18 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+constexpr juce::uint8 NUM_PATTERNS = 5;
+
 //==============================================================================
 FlarechainAudioProcessor::FlarechainAudioProcessor()
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+    : AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+                       .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+                       .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+      ), pattern_list(NUM_PATTERNS)
 {
 }
 

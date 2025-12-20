@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "../model/PatternList.h"
 
 //==============================================================================
 class FlarechainAudioProcessor final : public juce::AudioProcessor
@@ -42,7 +43,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
+    PatternList& get_pattern_list() { return pattern_list; }
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
+
+    PatternList pattern_list;
 };

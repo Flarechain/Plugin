@@ -4,11 +4,10 @@
 
 //==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
-    : AudioProcessorEditor(&p), processorRef(p)
+    : AudioProcessorEditor(&p), processorRef(p), pattern_list_view(p.get_pattern_list())
 {
-    addAndMakeVisible(pattern_view);
-
     juce::ignoreUnused(processorRef);
+    addAndMakeVisible(pattern_list_view);
     setSize(800, 600);
 }
 
@@ -26,5 +25,5 @@ void FlarechainAudioProcessorEditor::paint (juce::Graphics& g)
 
 void FlarechainAudioProcessorEditor::resized()
 {
-    pattern_view.setTopLeftPosition(100, 160);
+    pattern_list_view.setTopLeftPosition(100,100);
 }

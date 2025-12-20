@@ -5,10 +5,12 @@
 #include "MoreOptionsButton.h"
 #include "PlaybackControl.h"
 
+#include "../model/Pattern.h"
+
 class PatternView : public juce::Component
 {
 public:
-    PatternView();
+    PatternView(const Pattern& pattern);
 
     ~PatternView() override = default;
 
@@ -16,6 +18,8 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternView)
+
+    const Pattern& pattern;
 
     juce::Label pattern_label;
     RecordButton record_button;

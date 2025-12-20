@@ -24,9 +24,11 @@ CPMAddPackage(
 )
 
 file(GLOB PluginCoreFiles src/plugin_core/*)
+file(GLOB ModelFiles src/model/*)
 file(GLOB_RECURSE GuiComponentsFiles src/gui_components/*)
 list(FILTER GuiComponentsFiles EXCLUDE REGEX ".*\\.DS_Store$")
 set(SourceFiles
+        ${ModelFiles}
         ${PluginCoreFiles}
         ${GuiComponentsFiles}
 )
@@ -85,4 +87,5 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
+        juce::juce_osc
 )

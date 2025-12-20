@@ -6,3 +6,4 @@
 #include "PlaybackControl.h"
 #include "MoreOptionsButton.h"
 #include "PatternView.h"
+#include "PatternListView.h"

@@ -16,11 +16,8 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     FlarechainAudioProcessor& processorRef;
-
-    PatternView pattern_view;
+    PatternListView pattern_list_view;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };
