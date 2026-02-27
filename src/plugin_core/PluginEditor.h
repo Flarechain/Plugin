@@ -18,10 +18,6 @@ public:
 private:
     FlarechainAudioProcessor& processorRef;
     PatternListView pattern_list_view;
-    TextField text_field;
-    IpBlockField ip_block_field;
-    IpAddressField ip_address_field;
-    EventView event_view;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 };
