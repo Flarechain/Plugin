@@ -7,3 +7,7 @@
 #include "MoreOptionsButton.h"
 #include "PatternView.h"
 #include "PatternListView.h"
+#include "TextField.h"
+#include "IpBlockField.h"
+#include "IpAddressField.h"
+#include "EventView.h"
