@@ -16,8 +16,10 @@ public:
     void resized() override;
 
 private:
-    FlarechainAudioProcessor& processorRef;
-    PatternListView pattern_list_view;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
+
+    std::unique_ptr<juce::Drawable> logo;
+    PageView page_view;
+
+    FlarechainAudioProcessor& processorRef;
 };

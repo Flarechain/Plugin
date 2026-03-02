@@ -11,3 +11,6 @@
 #include "IpBlockField.h"
 #include "IpAddressField.h"
 #include "EventView.h"
+#include "ToggleButton.h"
+#include "TabBar.h"
+#include "PageView.h"
