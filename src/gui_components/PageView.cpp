@@ -2,8 +2,10 @@
 
 PageView::PageView(const PatternList& pattern_list) : tab_bar({Page::PatternSetup, Page::LiveDetection}), pattern_list_view(pattern_list)
 {
+    setInterceptsMouseClicks(false, true);
+
     current_page = tab_bar.get_current_page();
-    tab_bar.on_selection_change = [this](Page page)
+    tab_bar.on_change = [this](Page page)
     {
         current_page = page;
         resized();
@@ -34,6 +36,7 @@ void PageView::resized()
             pattern_list_view.setVisible(false);
 
             break;
-        default: ;
+        default:
+            break;
     }
 }

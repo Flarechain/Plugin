@@ -3,6 +3,8 @@
 
 PatternView::PatternView(const Pattern& pattern) : pattern(pattern)
 {
+    setInterceptsMouseClicks(false, true);
+
     const auto font = FontPalette::Text_L_Semibold;
     const char pattern_name = static_cast<char>('A' + (pattern.get_id() % 26));
     const auto text = juce::String("Pattern ") + pattern_name;

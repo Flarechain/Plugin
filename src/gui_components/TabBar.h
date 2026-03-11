@@ -13,7 +13,7 @@ public:
     void paint(juce::Graphics& g) override;
 
     Page get_current_page() const;
-    std::function<void(Page)> on_selection_change;
+    std::function<void(Page)> on_change;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TabBar)

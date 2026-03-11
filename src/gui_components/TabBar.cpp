@@ -58,5 +58,5 @@ void TabBar::set_current_page(Page page)
     if (page == current_page) return;
 
     current_page = page;
-    if (on_selection_change) { on_selection_change(page); }
+    if (on_change) { on_change(page); }
 }

@@ -8,6 +8,7 @@ public:
     static std::unique_ptr<juce::Drawable> Check(int size, juce::Colour color);
     static std::unique_ptr<juce::Drawable> Chevron(int size, juce::Colour color);
     static std::unique_ptr<juce::Drawable> Warning(int size, juce::Colour color);
+    static std::unique_ptr<juce::Drawable> Attention(int size, juce::Colour color);
     static std::unique_ptr<juce::Drawable> Import(int size, juce::Colour color);
     static std::unique_ptr<juce::Drawable> Logo(int size, juce::Colour color);
     static std::unique_ptr<juce::Drawable> Play(int size, juce::Colour color);

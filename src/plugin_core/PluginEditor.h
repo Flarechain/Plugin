@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 
 #include "../gui_components/Components.h"
+#include "../model/Instrument.h"
 
 //==============================================================================
 class FlarechainAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -20,6 +21,7 @@ private:
 
     std::unique_ptr<juce::Drawable> logo;
     PageView page_view;
+    Dropdown<Instrument> dropdown;
 
     FlarechainAudioProcessor& processorRef;
 };

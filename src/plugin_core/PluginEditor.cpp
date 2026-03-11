@@ -7,13 +7,19 @@ constexpr int PADDING = 48;
 
 //==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
-    : AudioProcessorEditor(&p), processorRef(p), page_view(p.get_pattern_list())
+    : AudioProcessorEditor(&p), processorRef(p), page_view(p.get_pattern_list()), dropdown(90, Instrument::Drums, "Drums")
 {
     juce::ignoreUnused(processorRef);
+    setWantsKeyboardFocus(true);
+    setMouseClickGrabsKeyboardFocus(true);
 
     logo = IconPalette::Logo(20, ColorPalette::Coffee500);
 
+    dropdown.add_item(Instrument::Guitar, "Guitar");
+    dropdown.add_item(Instrument::Keyboard, "Keyboard");
+
     addAndMakeVisible(page_view);
+    addAndMakeVisible(dropdown);
     setSize(800, 600);
 }
 
@@ -46,4 +52,6 @@ void FlarechainAudioProcessorEditor::resized()
     juce::RectanglePlacement placement = { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yBottom | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(page_view.getLocalBounds(), content_bounds);
     page_view.setBounds(content_bounds);
+
+    dropdown.setTopLeftPosition(600, 100);
 }

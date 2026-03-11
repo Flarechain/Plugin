@@ -8,11 +8,12 @@ enum class Page
     LiveDetection
 };
 
-static juce::String toString(Page page)
+static juce::String toString(const Page page)
 {
     switch (page)
     {
         case Page::PatternSetup:  return "Pattern Setup";
         case Page::LiveDetection:  return "Live Detection";
     }
+    return "";
 }

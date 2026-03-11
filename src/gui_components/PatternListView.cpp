@@ -6,6 +6,8 @@ constexpr int MAX_VISIBLE_PATTERNS = 5;     // maximum number of `PatternView`s 
 
 PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list(pattern_list)
 {
+    setInterceptsMouseClicks(false, true);
+
     for (const auto& pattern : pattern_list)
     {
         auto pattern_view = std::make_unique<PatternView>(*pattern);

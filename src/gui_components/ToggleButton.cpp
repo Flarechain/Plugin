@@ -1,7 +1,7 @@
 #include "ToggleButton.h"
 #include "palettes/Palette.h"
 
-ToggleButton::ToggleButton(const juce::String& button_text) : juce::ToggleButton(button_text)
+ToggleButton::ToggleButton(const juce::String& text) : juce::ToggleButton(text)
 {
     constexpr int padding_x = 16;
     constexpr int padding_y = 2;

@@ -3,14 +3,17 @@
 
 EventView::EventView(const Pattern& pattern) : pattern(pattern)
 {
+    setInterceptsMouseClicks(false, true);
+
     const auto font = FontPalette::Text_L_Semibold;
     const char event_name = static_cast<char>('A' + (pattern.get_id() % 26));
     const auto text = juce::String("Event ") + event_name;
     event_label.setText(text, juce::dontSendNotification);
     event_label.setFont(font);
     event_label.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
-    event_label.setSize(100, static_cast<int>(font.getHeight()));
+    event_label.setSize(80, static_cast<int>(font.getHeight()));
     event_label.setMinimumHorizontalScale(1.0f); // disable font stretching
+    event_label.setInterceptsMouseClicks(false, true);
 
     addAndMakeVisible(event_label);
     addAndMakeVisible(ip_address_field);

@@ -20,6 +20,11 @@ std::unique_ptr<juce::Drawable> IconPalette::Chevron(const int size, const juce:
 
 std::unique_ptr<juce::Drawable> IconPalette::Warning(const int size, const juce::Colour color)
 {
+    return create_icon(BinaryData::warning_svg, BinaryData::warning_svgSize, size, color);
+}
+
+std::unique_ptr<juce::Drawable> IconPalette::Attention(int size, juce::Colour color)
+{
     return create_icon(BinaryData::exclamationcircle_svg, BinaryData::exclamationcircle_svgSize, size, color);
 }
 

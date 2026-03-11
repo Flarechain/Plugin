@@ -3,6 +3,8 @@
 
 IpAddressField::IpAddressField()
 {
+    setInterceptsMouseClicks(false, true);
+
     icon = IconPalette::Arrow(9, ColorPalette::Coffee500);
 
     const auto font = FontPalette::Text_S_Semibold;
@@ -12,6 +14,7 @@ IpAddressField::IpAddressField()
     ip_label.setSize(16, static_cast<int>(font.getHeight()));
     ip_label.setMinimumHorizontalScale(1.0f); // disable font stretching
     ip_label.setBorderSize(juce::BorderSize(0));
+    ip_label.setInterceptsMouseClicks(false, true);
 
     point_1.setFont(font);
     point_1.setText(".", juce::dontSendNotification);

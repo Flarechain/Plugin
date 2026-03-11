@@ -3,6 +3,8 @@
 
 PlaybackControl::PlaybackControl() : juce::Component(), playback_bar(playback_progress), playback_progress(0.0)
 {
+    setInterceptsMouseClicks(false, true);
+
     addAndMakeVisible(play_button);
     addAndMakeVisible(playback_bar);
     setSize(288, 22);
