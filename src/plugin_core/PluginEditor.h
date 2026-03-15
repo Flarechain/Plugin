@@ -19,9 +19,11 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessorEditor)
 
-    std::unique_ptr<juce::Drawable> logo;
-    PageView page_view;
-    Dropdown<Instrument> dropdown;
-
     FlarechainAudioProcessor& processorRef;
+
+    std::unique_ptr<juce::Drawable> logo;
+    Dropdown<Instrument> instrument_dropdown;
+    Button train_button;
+    StatusBar status_bar;
+    PageView page_view;
 };

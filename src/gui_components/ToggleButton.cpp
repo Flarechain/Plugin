@@ -3,10 +3,8 @@
 
 ToggleButton::ToggleButton(const juce::String& text) : juce::ToggleButton(text)
 {
-    constexpr int padding_x = 16;
-    constexpr int padding_y = 2;
     auto font = FontPalette::Text_S_Medium;
-    setSize(padding_x * 2 + font.getStringWidth(getButtonText()), padding_y * 2 + static_cast<int>(font.getHeight()));
+    setSize(PADDING_X * 2 + font.getStringWidth(getButtonText()), PADDING_Y * 2 + static_cast<int>(font.getHeight()));
 }
 
 void ToggleButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)

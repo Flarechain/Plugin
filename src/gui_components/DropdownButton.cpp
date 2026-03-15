@@ -41,5 +41,3 @@ void DropdownButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool
         1.0f
     );
 }
-
-// TODO: make paddings static attributes in all gui components
