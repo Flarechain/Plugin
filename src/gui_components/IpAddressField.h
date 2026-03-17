@@ -17,7 +17,7 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IpAddressField)
 
-    std::unique_ptr<juce::Drawable> icon;
+    Icon icon;
     juce::Label ip_label;
     IpBlockField block_field_1, block_field_2, block_field_3, block_field_4;
     juce::Label point_1, point_2, point_3;

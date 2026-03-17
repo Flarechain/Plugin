@@ -12,9 +12,6 @@ public:
     Dropdown(int width, T default_item_id, juce::String default_item_text);
     ~Dropdown() override = default;
 
-    void resized() override;
-    void focusLost(FocusChangeType cause) override;
-
     void add_item(T item_id, juce::String item_text);
     T get_selected_item() const;
 
@@ -27,6 +24,7 @@ private:
     DropdownMenu<T> menu;
     static constexpr int GAP = 4;
 
+    void focusLost(FocusChangeType cause) override;
     void open_menu();
     void close_menu();
 };

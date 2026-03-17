@@ -3,15 +3,14 @@
 #include "BinaryData.h"
 #include "../gui_components/palettes/Palette.h"
 
-constexpr int PADDING = 48;
-
 //==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
     : AudioProcessorEditor(&p), processorRef(p),
     instrument_dropdown(90, Instrument::Guitar, "Guitar"),
     train_button("Train model", Primary),
     status_bar(Warning, "Model not trained"),
-    page_view(p.get_pattern_list())
+    page_view(p.get_pattern_list()),
+    more_options_menu(120)
 {
     juce::ignoreUnused(processorRef);
     setWantsKeyboardFocus(true);
@@ -26,6 +25,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     addAndMakeVisible(train_button);
     addAndMakeVisible(status_bar);
     addAndMakeVisible(page_view);
+    addAndMakeVisible(more_options_menu);
     setSize(800, 600);
 }
 
@@ -94,4 +94,6 @@ void FlarechainAudioProcessorEditor::resized()
     placement = { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yBottom | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(page_view.getLocalBounds(), content_bounds);
     page_view.setBounds(content_bounds);
+
+    more_options_menu.setTopLeftPosition(20, 20);
 }

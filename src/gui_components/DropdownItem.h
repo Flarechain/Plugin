@@ -12,4 +12,7 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DropdownItem)
+
+    static constexpr int PADDING_X = 8;
+    static constexpr int PADDING_Y = 2;
 };

@@ -26,4 +26,6 @@ private:
     Button train_button;
     StatusBar status_bar;
     PageView page_view;
+    MoreOptionsMenu more_options_menu;
+    static constexpr int PADDING = 48;
 };

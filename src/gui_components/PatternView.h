@@ -2,7 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "RecordButton.h"
-#include "MoreOptionsButton.h"
+#include "MoreOptions.h"
 #include "PlaybackControl.h"
 
 #include "../model/Pattern.h"
@@ -15,6 +15,8 @@ public:
     ~PatternView() override = default;
 
     void resized() override;
+    std::function<void()> on_import;
+    std::function<void()> on_delete;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternView)
@@ -23,6 +25,9 @@ private:
 
     juce::Label pattern_label;
     RecordButton record_button;
-    MoreOptionsButton more_options_button;
+    MoreOptions more_options;
     PlaybackControl playback_control;
+
+    void import_midi() const;
+    void delete_pattern() const;
 };

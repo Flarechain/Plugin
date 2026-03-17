@@ -1,9 +1,6 @@
 #include "DropdownItem.h"
 #include "palettes/Palette.h"
 
-constexpr int PADDING_X = 8;
-constexpr int PADDING_Y = 2;
-
 DropdownItem::DropdownItem(const juce::String& text, int width) : juce::ToggleButton(text)
 {
     auto font = FontPalette::Text_S_Medium;

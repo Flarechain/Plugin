@@ -5,6 +5,8 @@
 #include "PlaybackBar.h"
 #include "PlaybackControl.h"
 #include "MoreOptionsButton.h"
+#include "MoreOptionsItem.h"
+#include "MoreOptionsMenu.h"
 #include "PatternView.h"
 #include "PatternListView.h"
 #include "TextField.h"

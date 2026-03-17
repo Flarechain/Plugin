@@ -8,7 +8,6 @@ class PlaybackControl : public juce::Component
 {
 public:
     PlaybackControl();
-
     ~PlaybackControl() override = default;
 
     void resized() override;

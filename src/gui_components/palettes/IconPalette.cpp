@@ -3,72 +3,72 @@
 
 // TODO: docs
 
-std::unique_ptr<juce::Drawable> IconPalette::Arrow(const int size, const juce::Colour color)
+Icon IconPalette::Arrow(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::arrow_svg, BinaryData::arrow_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Check(const int size, const juce::Colour color)
+Icon IconPalette::Check(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::check_svg, BinaryData::check_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Chevron(const int size, const juce::Colour color)
+Icon IconPalette::Chevron(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::chevrondown_svg, BinaryData::chevrondown_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Warning(const int size, const juce::Colour color)
+Icon IconPalette::Warning(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::warning_svg, BinaryData::warning_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Attention(int size, juce::Colour color)
+Icon IconPalette::Attention(int size, juce::Colour color)
 {
     return create_icon(BinaryData::exclamationcircle_svg, BinaryData::exclamationcircle_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Import(const int size, const juce::Colour color)
+Icon IconPalette::Import(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::import_svg, BinaryData::import_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Logo(const int size, const juce::Colour color)
+Icon IconPalette::Logo(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::logo_extended_svg, BinaryData::logo_extended_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Play(const int size, const juce::Colour color)
+Icon IconPalette::Play(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::play_svg, BinaryData::play_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Record(const int size, const juce::Colour color)
+Icon IconPalette::Record(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::record_svg, BinaryData::record_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Save(const int size, const juce::Colour color)
+Icon IconPalette::Save(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::save_svg, BinaryData::save_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Stop(const int size, const juce::Colour color)
+Icon IconPalette::Stop(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::stop_svg, BinaryData::stop_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::MoreOptions(const int size, const juce::Colour color)
+Icon IconPalette::MoreOptions(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::threedots_svg, BinaryData::threedots_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::Trash(const int size, const juce::Colour color)
+Icon IconPalette::Trash(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::trash_svg, BinaryData::trash_svgSize, size, color);
 }
 
-std::unique_ptr<juce::Drawable> IconPalette::create_icon(const char* data, const int data_size, const int icon_size, const juce::Colour color)
+Icon IconPalette::create_icon(const char* data, const int data_size, const int icon_size, const juce::Colour color)
 {
     auto icon = juce::Drawable::createFromImageData(data, static_cast<size_t>(data_size));
 

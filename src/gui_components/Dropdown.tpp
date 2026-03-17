@@ -30,12 +30,6 @@ Dropdown<T>::Dropdown(int width, T default_item_id, juce::String default_item_te
 }
 
 template <typename T>
-void Dropdown<T>::resized()
-{
-
-}
-
-template <typename T>
 void Dropdown<T>::add_item(T item_id, juce::String item_text)
 {
     menu.add_item(item_id, item_text);
@@ -66,7 +60,7 @@ void Dropdown<T>::open_menu()
     menu.setBounds(
         top_component->getLocalPoint(this, button_bounds.getBottomLeft()).getX(),
         top_component->getLocalPoint(this, button_bounds.getBottomLeft()).getY() + GAP,
-        button_bounds.getWidth(),
+        menu.getWidth(),
         menu.getHeight()
     );
 

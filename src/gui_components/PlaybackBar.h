@@ -6,7 +6,6 @@ class PlaybackBar : public juce::ProgressBar
 {
 public:
     explicit PlaybackBar(double& progress);
-
     ~PlaybackBar() override = default;
 
     void paint(juce::Graphics& g) override;

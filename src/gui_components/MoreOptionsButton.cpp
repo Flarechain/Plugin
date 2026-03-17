@@ -26,5 +26,3 @@ void MoreOptionsButton::paintButton(juce::Graphics& g, bool isMouseOverButton, b
         1.0f
     );
 }
-
-// TODO: open popup on click

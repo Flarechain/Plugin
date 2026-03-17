@@ -1,7 +1,7 @@
 #include "PlaybackControl.h"
 #include "palettes/Palette.h"
 
-PlaybackControl::PlaybackControl() : juce::Component(), playback_bar(playback_progress), playback_progress(0.0)
+PlaybackControl::PlaybackControl() : playback_bar(playback_progress), playback_progress(0.0)
 {
     setInterceptsMouseClicks(false, true);
 

@@ -24,5 +24,5 @@ private:
     Status status;
     juce::String message;
 
-    std::unique_ptr<juce::Drawable> icon;
+    Icon icon;
 };

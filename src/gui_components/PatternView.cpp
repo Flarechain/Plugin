@@ -1,7 +1,7 @@
 #include "PatternView.h"
 #include "palettes/Palette.h"
 
-PatternView::PatternView(const Pattern& pattern) : pattern(pattern)
+PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_options(120)
 {
     setInterceptsMouseClicks(false, true);
 
@@ -14,14 +14,17 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern)
     pattern_label.setSize(100, static_cast<int>(font.getHeight()));
     pattern_label.setMinimumHorizontalScale(1.0f); // disable font stretching
 
+    more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
+    more_options.add_item("Delete pattern", IconPalette::Trash(12, ColorPalette::Coffee500), [this] { delete_pattern(); });
+
     addAndMakeVisible(pattern_label);
     addAndMakeVisible(record_button);
-    addAndMakeVisible(more_options_button);
+    addAndMakeVisible(more_options);
     addAndMakeVisible(playback_control);
 
     constexpr int gap = 8;
     const int top_row_height = std::max(pattern_label.getHeight(),
-                                        std::max(record_button.getHeight(), more_options_button.getHeight()));
+                                        std::max(record_button.getHeight(), more_options.getHeight()));
     setSize(playback_control.getWidth(), top_row_height + gap + playback_control.getHeight());
 }
 
@@ -30,14 +33,14 @@ void PatternView::resized()
     // record_button + more_options_button
     constexpr int buttons_top_gap = 8;
     auto buttons_top_bounds = juce::Rectangle(
-            record_button.getWidth() + buttons_top_gap + more_options_button.getWidth(),
-            std::max(record_button.getHeight(), more_options_button.getHeight())
+            record_button.getWidth() + buttons_top_gap + more_options.getWidth(),
+            std::max(record_button.getHeight(), more_options.getHeight())
     );
 
     // pattern_label + (record_button + more_options_button)
     auto top_row_bounds = juce::Rectangle(
             playback_control.getWidth(),
-            std::max(pattern_label.getHeight(), std::max(record_button.getHeight(), more_options_button.getHeight()))
+            std::max(pattern_label.getHeight(), std::max(record_button.getHeight(), more_options.getHeight()))
     );
 
     const juce::RectanglePlacement buttons_top_placement { juce::RectanglePlacement::xRight | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
@@ -56,5 +59,17 @@ void PatternView::resized()
     record_button.setBounds(record_button_placement.appliedTo(record_button.getLocalBounds(), buttons_top_bounds));
 
     const juce::RectanglePlacement more_options_button_placement { juce::RectanglePlacement::xRight | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
-    more_options_button.setBounds(more_options_button_placement.appliedTo(more_options_button.getLocalBounds(), buttons_top_bounds));
+    more_options.setBounds(more_options_button_placement.appliedTo(more_options.getLocalBounds(), buttons_top_bounds));
 }
+
+void PatternView::import_midi() const
+{
+    if (on_import) { on_import(); }
+}
+
+void PatternView::delete_pattern() const
+{
+    if (on_delete) { on_delete(); }
+}
+
+// TODO: warning popup on delete (maybe in PLuginEditor?)
