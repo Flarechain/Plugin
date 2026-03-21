@@ -12,8 +12,9 @@ public:
     Dropdown(int width, T default_item_id, juce::String default_item_text);
     ~Dropdown() override = default;
 
-    void add_item(T item_id, juce::String item_text);
+    void add_item(T item_id, juce::String item_text, bool selected);
     T get_selected_item() const;
+    std::function<void(Item<T>)> on_change;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dropdown)

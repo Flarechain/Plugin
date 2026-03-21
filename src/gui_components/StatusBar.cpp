@@ -8,7 +8,7 @@ StatusBar::StatusBar(Status status, juce::String  message) : status(status), mes
 
     if (status == Ok)
     {
-        icon = IconPalette::Check(7, ColorPalette::Coffee500);
+        icon = IconPalette::Check(12, ColorPalette::Coffee500);
     }
     else if (status == Warning)
     {

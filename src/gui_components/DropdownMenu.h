@@ -16,6 +16,7 @@ public:
 
     void paint(juce::Graphics& g) override;
 
+    void add_item(T id, juce::String text, bool selected);
     T get_selected_item() const;
     std::function<void(Item<T>)> on_change;
 
@@ -28,11 +29,12 @@ private:
 
     std::vector<std::unique_ptr<DropdownItem>> items;
 
-    void add_item(T id, juce::String text);
-    void set_selected_item(Item<T> id);
+    void set_selected_item(Item<T> item);
+    void clear();
 
     template<typename U>
     friend class Dropdown;
+    friend class PresetDropdown;
 };
 
 #include "DropdownMenu.tpp"

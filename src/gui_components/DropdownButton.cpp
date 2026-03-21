@@ -5,7 +5,7 @@
 
 DropdownButton::DropdownButton(const int width, juce::String text) : Button(text)
 {
-    icon = IconPalette::Chevron(5, ColorPalette::Coffee500);
+    icon = IconPalette::Chevron(8, ColorPalette::Coffee500);
 
     auto font = FontPalette::Text_S_Semibold;
     setSize(width, font.getHeight() + PADDING_Y * 2);

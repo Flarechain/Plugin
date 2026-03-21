@@ -7,7 +7,6 @@ class RecordButton : public juce::Button
 {
 public:
     RecordButton();
-
     ~RecordButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

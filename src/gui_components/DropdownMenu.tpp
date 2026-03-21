@@ -5,10 +5,7 @@
 template <typename T>
 DropdownMenu<T>::DropdownMenu(const int width, T default_item_id, juce::String default_item_text) : width(width)
 {
-    add_item(default_item_id, default_item_text);
-
-    items.at(0)->setToggleState(true, juce::dontSendNotification);
-    selected_item = Item<T>{default_item_id, default_item_text};
+    add_item(default_item_id, default_item_text, true);
 }
 
 template <typename T>
@@ -31,7 +28,7 @@ void DropdownMenu<T>::paint(juce::Graphics& g)
 }
 
 template <typename T>
-void DropdownMenu<T>::add_item(T id, juce::String text)
+void DropdownMenu<T>::add_item(T id, juce::String text, bool selected)
 {
     auto item = std::make_unique<DropdownItem>(text, width - PADDING * 2);
     item->setRadioGroupId(1);
@@ -39,6 +36,12 @@ void DropdownMenu<T>::add_item(T id, juce::String text)
     {
         set_selected_item(Item<T>{id, text});
     };
+
+    if (items.empty() || selected)
+    {
+        set_selected_item(Item<T>{id, text});
+        item->triggerClick();
+    }
 
     items.push_back(std::move(item));
     addAndMakeVisible(*items.back());
@@ -63,3 +66,13 @@ T DropdownMenu<T>::get_selected_item() const
 {
     return selected_item.id;
 }
+
+template <typename T>
+void DropdownMenu<T>::clear()
+{
+    items.clear();
+    removeAllChildren();
+    setSize(0, 0);
+}
+
+// TODO: make dropdownmenu scrollable with max height

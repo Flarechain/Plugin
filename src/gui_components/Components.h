@@ -22,3 +22,6 @@
 #include "Dropdown.h"
 #include "Button.h"
 #include "StatusBar.h"
+#include "PresetDropdownButton.h"
+#include "PresetDropdown.h"
+#include "SaveAsButton.h"

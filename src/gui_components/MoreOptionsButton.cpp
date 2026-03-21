@@ -3,7 +3,7 @@
 
 MoreOptionsButton::MoreOptionsButton() : Button("MORE OPTIONS")
 {
-    icon = IconPalette::MoreOptions(3, ColorPalette::Coffee500);
+    icon = IconPalette::MoreOptions(16, ColorPalette::Coffee500);
     setSize(24, 24);
 }
 

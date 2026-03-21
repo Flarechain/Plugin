@@ -1,7 +1,7 @@
 #include "PatternView.h"
 #include "palettes/Palette.h"
 
-PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_options(120)
+PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_options(126)
 {
     setInterceptsMouseClicks(false, true);
 
@@ -13,6 +13,7 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     pattern_label.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
     pattern_label.setSize(100, static_cast<int>(font.getHeight()));
     pattern_label.setMinimumHorizontalScale(1.0f); // disable font stretching
+    pattern_label.setInterceptsMouseClicks(false, true);
 
     more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
     more_options.add_item("Delete pattern", IconPalette::Trash(12, ColorPalette::Coffee500), [this] { delete_pattern(); });

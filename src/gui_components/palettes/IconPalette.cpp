@@ -85,14 +85,27 @@ void IconPalette::recolor(juce::Drawable* icon, const juce::Colour& color)
 
 void IconPalette::resize(juce::Drawable* icon, const int size)
 {
-    const float old_width = icon->getDrawableBounds().getWidth();   // icon old width
-    const float old_height = icon->getDrawableBounds().getHeight(); // icon old height
-    const float scale = static_cast<float>(size) / old_height;
-    const float new_width = old_width * scale;      // icon new width
-    const float new_height = old_height * scale;    // icon new height
-    icon->setTransform(juce::AffineTransform::scale(scale, scale));
+    float viewbox_ratio = icon->getLocalBounds().toFloat().getAspectRatio(true); // ratio as width / height
+    const float old_viewbox_width = icon->getLocalBounds().toFloat().getWidth();
+    const float old_viewbox_height = icon->getLocalBounds().toFloat().getHeight();
+    const float new_viewbox_height = size;
+    const float new_viewbox_width = new_viewbox_height * viewbox_ratio;
 
-    const int bounds_width = static_cast<int>(std::ceil(new_width));    // icon bounds new width
-    const int bounds_height = static_cast<int>(std::ceil(new_height));  // icon bounds new height
-    icon->setBounds(0, 0, bounds_width, bounds_height);
+    float drawable_ratio = icon->getDrawableBounds().toFloat().getAspectRatio(true);
+    auto old_drawable_width = icon->getDrawableBounds().getWidth();
+    auto old_drawable_height = icon->getDrawableBounds().getHeight();
+    auto new_drawable_height = (new_viewbox_height * old_drawable_height) / old_viewbox_height;
+    auto new_drawable_width = new_drawable_height * drawable_ratio;
+
+    icon->setBounds(0, 0, new_viewbox_width, new_viewbox_height);
+
+    auto new_drawable_bounds = juce::Rectangle<float>(0,
+        0,
+        new_drawable_width,
+        new_drawable_height
+    );
+    juce::RectanglePlacement placement { juce::RectanglePlacement::centred };
+    new_drawable_bounds = placement.appliedTo(new_drawable_bounds, icon->getLocalBounds().toFloat());
+
+    icon->setTransformToFit(new_drawable_bounds, juce::RectanglePlacement::stretchToFit);
 }

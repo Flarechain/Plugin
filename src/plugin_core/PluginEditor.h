@@ -22,10 +22,12 @@ private:
     FlarechainAudioProcessor& processorRef;
 
     std::unique_ptr<juce::Drawable> logo;
+    juce::Label preset_label;
+    PresetDropdown preset_dropdown;
+    SaveAsButton save_as_button;
     Dropdown<Instrument> instrument_dropdown;
     Button train_button;
     StatusBar status_bar;
     PageView page_view;
-    MoreOptionsMenu more_options_menu;
     static constexpr int PADDING = 48;
 };
