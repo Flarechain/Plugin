@@ -2,8 +2,9 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "PatternListView.h"
 #include "TabBar.h"
+#include "PatternListView.h"
+#include "LogPanel.h"
 
 class PageView : public juce::Component
 {
@@ -20,6 +21,7 @@ private:
 
     TabBar tab_bar;
     PatternListView pattern_list_view;
+    LogPanel log_panel;
 };
 
 // TODO: for each class in this project, check whether it should be public/private..

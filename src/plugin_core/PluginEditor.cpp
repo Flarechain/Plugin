@@ -1,5 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+
+#include <complex>
+
 #include "BinaryData.h"
 #include "../gui_components/palettes/Palette.h"
 
@@ -8,7 +11,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     : AudioProcessorEditor(&p), processorRef(p),
     instrument_dropdown(90, Instrument::Guitar, "Guitar"),
     train_button("Train model", Primary),
-    status_bar(Warning, "Model not trained"),
+    status_bar(Warning, "No pattern has been set up"),
     page_view(p.get_pattern_list())
 {
     juce::ignoreUnused(processorRef);
@@ -68,7 +71,7 @@ void FlarechainAudioProcessorEditor::resized()
     int gap = 4;
     auto preset_bounds = juce::Rectangle<int>(0,
         0,
-        160,
+        190,
         preset_label.getHeight() + gap + preset_dropdown.getHeight());
     juce::RectanglePlacement placement = { juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
     preset_bounds = placement.appliedTo(preset_bounds, header_bounds);

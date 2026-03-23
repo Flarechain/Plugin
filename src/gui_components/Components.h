@@ -25,3 +25,6 @@
 #include "PresetDropdownButton.h"
 #include "PresetDropdown.h"
 #include "SaveAsButton.h"
+#include "LinkButton.h"
+#include "LogEntry.h"
+#include "LogPanel.h"
