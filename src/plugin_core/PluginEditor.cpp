@@ -1,8 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include <complex>
-
 #include "BinaryData.h"
 #include "../gui_components/palettes/Palette.h"
 
@@ -35,6 +33,25 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     {
         resized();
     };
+
+    page_view.on_pattern_import = [this](const PatternId id)
+    {
+        if (processorRef.get_pattern_list().get(id).has_empty_midi())
+        {
+            // call to MIDI import function
+        }
+        else
+        {
+            show_pattern_import_modal(id);
+        }
+    };
+    page_view.on_pattern_delete = [this](const PatternId id)
+    {
+        show_pattern_delete_modal(id);
+    };
+
+    overlay_background.setFill(juce::FillType(juce::Colours::black.withAlpha(0.25f)));
+    addChildComponent(overlay_background);
 
     addAndMakeVisible(preset_label);
     addAndMakeVisible(preset_dropdown);
@@ -131,4 +148,80 @@ void FlarechainAudioProcessorEditor::resized()
     placement = { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yBottom | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(page_view.getLocalBounds(), content_bounds);
     page_view.setBounds(content_bounds);
+
+    overlay_background.setBounds(getLocalBounds());
+    overlay_background.setRectangle(juce::Parallelogram(getLocalBounds().toFloat()));
+}
+
+void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern_id)
+{
+    auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to import MIDI into Pattern " + pattern_name + "?",
+        "This will overwrite the existing pattern and cannot be undone.",
+        "Import MIDI",
+        "Cancel"
+    );
+
+    modal_dialog->on_primary_action = [this, pattern_id]()
+    {
+        // call to import MIDI function
+        close_modal();
+    };
+    modal_dialog->on_secondary_action = [this]()
+    {
+        close_modal();
+    };
+
+    show_modal();
+}
+
+void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern_id)
+{
+    auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to delete Pattern " + pattern_name + "?",
+        "This cannot be undone.",
+        "Delete pattern",
+        "Cancel"
+    );
+
+    modal_dialog->on_primary_action = [this, pattern_id]()
+    {
+        // call to pattern delete function
+        close_modal();
+    };
+    modal_dialog->on_secondary_action = [this]()
+    {
+        close_modal();
+    };
+
+    show_modal();
+}
+
+void FlarechainAudioProcessorEditor::show_modal()
+{
+    if (modal_dialog == nullptr) return;
+
+    overlay_background.setVisible(true);
+    overlay_background.setInterceptsMouseClicks(true, true);
+    overlay_background.toFront(false);
+
+    addAndMakeVisible(*modal_dialog);
+    modal_dialog->toFront(true);
+    modal_dialog->enterModalState(true);
+
+    const juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
+    modal_dialog->setBounds(placement.appliedTo(modal_dialog->getLocalBounds(), getLocalBounds()));
+}
+
+void FlarechainAudioProcessorEditor::close_modal()
+{
+    if (modal_dialog != nullptr)
+    {
+        overlay_background.setVisible(false);
+        modal_dialog->exitModalState(0);
+        removeChildComponent(modal_dialog.get());
+        modal_dialog.reset();
+    }
+
+    repaint();
 }

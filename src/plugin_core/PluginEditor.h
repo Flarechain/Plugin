@@ -29,5 +29,12 @@ private:
     Button train_button;
     StatusBar status_bar;
     PageView page_view;
+    std::unique_ptr<ModalDialog> modal_dialog;
+    juce::DrawableRectangle overlay_background;     // darker background shown when modal_dialog is opened
     static constexpr int PADDING = 48;
+
+    void show_pattern_delete_modal(PatternId pattern_id);
+    void show_pattern_import_modal(PatternId pattern_id);
+    void show_modal();
+    void close_modal();
 };

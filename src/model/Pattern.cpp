@@ -1,11 +1,6 @@
 #include "Pattern.h"
 
-Pattern::Pattern(juce::uint8 id)
+Pattern::Pattern(PatternId id) : id(id)
 {
-    this->id = id;
-}
-
-juce::uint8 Pattern::get_id() const
-{
-    return id;
+    name = juce::String::charToString(static_cast<char>('A' + (id % 26)));
 }

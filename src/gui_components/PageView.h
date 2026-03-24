@@ -14,6 +14,9 @@ public:
 
     void resized() override;
 
+    std::function<void(PatternId id)> on_pattern_import;
+    std::function<void(PatternId id)> on_pattern_delete;
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PageView)
 

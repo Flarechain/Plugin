@@ -6,8 +6,7 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     setInterceptsMouseClicks(false, true);
 
     const auto font = FontPalette::Text_L_Semibold;
-    const char pattern_name = static_cast<char>('A' + (pattern.get_id() % 26));
-    const auto text = juce::String("Pattern ") + pattern_name;
+    const auto text = juce::String("Pattern ") + pattern.get_name();
     pattern_label.setText(text, juce::dontSendNotification);
     pattern_label.setFont(font);
     pattern_label.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
@@ -27,6 +26,22 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     const int top_row_height = std::max(pattern_label.getHeight(),
                                         std::max(record_button.getHeight(), more_options.getHeight()));
     setSize(playback_control.getWidth(), top_row_height + gap + playback_control.getHeight());
+}
+
+void PatternView::paint(juce::Graphics& g)
+{
+    if (pattern.has_empty_midi())
+    {
+        pattern_label.setAlpha(0.3f);
+        playback_control.setAlpha(0.3f);
+        playback_control.setEnabled(false);
+    }
+    else
+    {
+        pattern_label.setAlpha(1.0f);
+        playback_control.setAlpha(1.0f);
+        playback_control.setEnabled(true);
+    }
 }
 
 void PatternView::resized()
@@ -63,14 +78,20 @@ void PatternView::resized()
     more_options.setBounds(more_options_button_placement.appliedTo(more_options.getLocalBounds(), buttons_top_bounds));
 }
 
-void PatternView::import_midi() const
+void PatternView::import_midi()
 {
-    if (on_import) { on_import(); }
+    if (on_import)
+    {
+        on_import();
+        repaint();
+    }
 }
 
-void PatternView::delete_pattern() const
+void PatternView::delete_pattern()
 {
-    if (on_delete) { on_delete(); }
+    if (on_delete)
+    {
+        on_delete();
+        repaint();
+    }
 }
-
-// TODO: warning popup on delete (maybe in PLuginEditor?)

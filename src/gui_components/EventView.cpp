@@ -6,8 +6,7 @@ EventView::EventView(const Pattern& pattern) : pattern(pattern)
     setInterceptsMouseClicks(false, true);
 
     const auto font = FontPalette::Text_L_Semibold;
-    const char event_name = static_cast<char>('A' + (pattern.get_id() % 26));
-    const auto text = juce::String("Event ") + event_name;
+    const auto text = juce::String("Event ") + pattern.get_name();
     event_label.setText(text, juce::dontSendNotification);
     event_label.setFont(font);
     event_label.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
@@ -22,6 +21,30 @@ EventView::EventView(const Pattern& pattern) : pattern(pattern)
     constexpr int gap = 8;
     const int top_row_height = std::max(event_label.getHeight(), ip_address_field.getHeight());
     setSize(text_field.getWidth(), top_row_height + gap + text_field.getHeight());
+}
+
+void EventView::paint(juce::Graphics& g)
+{
+    if (pattern.has_empty_midi())
+    {
+        event_label.setAlpha(0.3f);
+        ip_address_field.setAlpha(0.3f);
+        text_field.setAlpha(0.3f);
+        ip_address_field.setEnabled(false);
+        text_field.setEnabled(false);
+        ip_address_field.setInterceptsMouseClicks(false, false);
+        text_field.setInterceptsMouseClicks(false, false);
+    }
+    else
+    {
+        event_label.setAlpha(1.0f);
+        ip_address_field.setAlpha(1.0f);
+        text_field.setAlpha(1.0f);
+        ip_address_field.setEnabled(true);
+        text_field.setEnabled(true);
+        ip_address_field.setInterceptsMouseClicks(false, true);
+        text_field.setInterceptsMouseClicks(true, true);
+    }
 }
 
 void EventView::resized()

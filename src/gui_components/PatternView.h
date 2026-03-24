@@ -14,6 +14,7 @@ public:
 
     ~PatternView() override = default;
 
+    void paint(juce::Graphics& g) override;
     void resized() override;
     std::function<void()> on_import;
     std::function<void()> on_delete;
@@ -28,6 +29,6 @@ private:
     MoreOptions more_options;
     PlaybackControl playback_control;
 
-    void import_midi() const;
-    void delete_pattern() const;
+    void import_midi();
+    void delete_pattern();
 };

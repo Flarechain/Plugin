@@ -3,16 +3,23 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include "Event.h"
 
+typedef juce::uint8 PatternId;
+typedef juce::String PatternName;
+
 class Pattern
 {
 public:
-    Pattern(juce::uint8 id);
+    Pattern(PatternId id);
     ~Pattern() = default;
 
-    [[nodiscard]] juce::uint8 get_id() const;
+    [[nodiscard]] PatternId get_id() const { return id; }
+    PatternName get_name() const { return name; }
+    juce::MidiMessage get_midi() const { return midi; }
+    bool has_empty_midi() const { return midi.getRawDataSize() > 0; }
 
 private:
-    juce::uint8 id;
-    juce::MidiMessage recording;
+    PatternId id;
+    PatternName name;
+    juce::MidiMessage midi;
     Event event;
 };

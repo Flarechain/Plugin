@@ -10,9 +10,9 @@ class EventView : public juce::Component
 {
 public:
     EventView(const Pattern& pattern);
-
     ~EventView() override = default;
 
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

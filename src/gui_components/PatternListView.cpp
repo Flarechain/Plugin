@@ -12,6 +12,16 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
     {
         auto pattern_view = std::make_unique<PatternView>(*pattern);
         auto event_view = std::make_unique<EventView>(*pattern);
+
+        pattern_view->on_import = [this, &pattern]()
+        {
+            if (on_import) { on_import(pattern->get_id()); }
+        };
+        pattern_view->on_delete = [this, &pattern]()
+        {
+            if (on_delete) { on_delete(pattern->get_id()); }
+        };
+
         addAndMakeVisible(*pattern_view);
         addAndMakeVisible(*event_view);
         pattern_views.push_back(std::move(pattern_view));

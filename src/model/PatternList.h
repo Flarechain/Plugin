@@ -15,7 +15,7 @@ public:
     auto end()   const { return list.end(); }
 
     [[nodiscard]] juce::uint8 length() const { return static_cast<juce::uint8>(list.size()); }
-    [[nodiscard]] Pattern& get(juce::uint8 pattern_id) const { return *list.at(pattern_id); }
+    [[nodiscard]] Pattern& get(PatternId pattern_id) const { return *list.at(pattern_id); }
 
 private:
     std::vector<std::unique_ptr<Pattern>> list;

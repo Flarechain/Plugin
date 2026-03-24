@@ -28,3 +28,4 @@
 #include "LinkButton.h"
 #include "LogEntry.h"
 #include "LogPanel.h"
+#include "ModalDialog.h"

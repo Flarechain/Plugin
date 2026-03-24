@@ -9,10 +9,12 @@ class PatternListView : public juce::Component
 {
 public:
     PatternListView(const PatternList& pattern_list);
-
     ~PatternListView() override = default;
 
     void resized() override;
+
+    std::function<void(PatternId id)> on_import;
+    std::function<void(PatternId id)> on_delete;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternListView)
