@@ -6,7 +6,9 @@
 class SaveAsButton : public juce::Button
 {
 public:
+    /// Creates a new SaveAsButton.
     SaveAsButton();
+
     ~SaveAsButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

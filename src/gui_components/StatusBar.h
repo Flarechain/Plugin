@@ -13,10 +13,15 @@ enum Status
 class StatusBar : public juce::Component
 {
 public:
+    /// Creates a new StatusBar with the given status and message to display.
     StatusBar(Status status, juce::String  message);
+
     ~StatusBar() override = default;
 
     void paint(juce::Graphics& g) override;
+
+    /// Sets a new status with a new message.
+    void set_status(Status status, juce::String message);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StatusBar)

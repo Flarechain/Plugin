@@ -6,11 +6,17 @@
 class RecordButton : public juce::Button
 {
 public:
+    /// Creates a new RecordButton.
     RecordButton();
+
     ~RecordButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+
+    /// Changes the state of RecordButton, setting `is_recording` to true.
     void record();
+
+    /// Changes the state of RecordButton, setting `is_recording` to false.
     void stop();
 
 private:

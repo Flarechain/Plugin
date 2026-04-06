@@ -7,9 +7,14 @@
 class MoreOptions : public juce::Component
 {
 public:
-    MoreOptions(int menu_width);
+    /// Creates a new MoreOptions button, which will open a MoreOptionsMenu on button click.
+    ///
+    /// To add items to the menu, use add_item.
+    explicit MoreOptions(int menu_width);
+
     ~MoreOptions() override = default;
 
+    /// Adds a new item to the MoreOptionsMenu, with the given text, icon, and action to do when chosen.
     void add_item(const juce::String& item_text, Icon item_icon, const std::function<void()>& on_click);
 
 private:

@@ -9,7 +9,7 @@ enum class Instrument
     Drums
 };
 
-static juce::String toString(const Instrument instrument)
+inline juce::String toString(const Instrument instrument)
 {
     switch (instrument)
     {

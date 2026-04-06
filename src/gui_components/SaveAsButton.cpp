@@ -7,7 +7,7 @@ SaveAsButton::SaveAsButton() : Button("Save as")
     setSize(icon->getWidth() + PADDING * 2, icon->getHeight() + PADDING * 2);
 }
 
-void SaveAsButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void SaveAsButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);

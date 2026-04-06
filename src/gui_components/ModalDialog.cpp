@@ -3,11 +3,11 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "ModalDialog.h"
 
-ModalDialog::ModalDialog(juce::String title, juce::String subtitle, juce::String primary_action_label, juce::String secondary_action_label) :
-    title(title),
-    subtitle(subtitle),
-    primary_button(std::move(primary_action_label), Primary, 112),
-    secondary_button(std::move(secondary_action_label), Secondary, 112)
+ModalDialog::ModalDialog(juce::String title, juce::String subtitle, const juce::String& primary_action_label, const juce::String& secondary_action_label) :
+    title(std::move(title)),
+    subtitle(std::move(subtitle)),
+    primary_button(primary_action_label, Primary, 112),
+    secondary_button(secondary_action_label, Secondary, 112)
 {
     icon = IconPalette::Warning(30, ColorPalette::Coffee500);
 
@@ -25,7 +25,7 @@ ModalDialog::ModalDialog(juce::String title, juce::String subtitle, juce::String
     const auto subtitle_font = FontPalette::Text_M_Medium;
 
     juce::AttributedString title_text;
-    title_text.setText(title);
+    title_text.setText(this->title);
     title_text.setColour(ColorPalette::Coffee500);
     title_text.setFont(title_font);
     title_text.setJustification(juce::Justification::topLeft);
@@ -36,7 +36,7 @@ ModalDialog::ModalDialog(juce::String title, juce::String subtitle, juce::String
     const int title_height = static_cast<int>(title_font.getHeight() + TITLE_LINE_SPACING) * title_lines;
 
     juce::AttributedString subtitle_text;
-    subtitle_text.setText(subtitle);
+    subtitle_text.setText(this->subtitle);
     subtitle_text.setColour(ColorPalette::Coffee500);
     subtitle_text.setFont(subtitle_font);
     subtitle_text.setJustification(juce::Justification::topLeft);

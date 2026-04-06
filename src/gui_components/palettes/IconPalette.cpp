@@ -1,8 +1,6 @@
 #include "IconPalette.h"
 #include "BinaryData.h"
 
-// TODO: docs
-
 Icon IconPalette::Arrow(const int size, const juce::Colour color)
 {
     return create_icon(BinaryData::arrow_svg, BinaryData::arrow_svgSize, size, color);
@@ -85,19 +83,22 @@ void IconPalette::recolor(juce::Drawable* icon, const juce::Colour& color)
 
 void IconPalette::resize(juce::Drawable* icon, const int size)
 {
-    float viewbox_ratio = icon->getLocalBounds().toFloat().getAspectRatio(true); // ratio as width / height
-    const float old_viewbox_width = icon->getLocalBounds().toFloat().getWidth();
+    const float viewbox_ratio = icon->getLocalBounds().toFloat().getAspectRatio(true); // ratio as width / height
+    // const float old_viewbox_width = icon->getLocalBounds().toFloat().getWidth();
     const float old_viewbox_height = icon->getLocalBounds().toFloat().getHeight();
-    const float new_viewbox_height = size;
+    const auto new_viewbox_height = static_cast<float>(size);
     const float new_viewbox_width = new_viewbox_height * viewbox_ratio;
 
-    float drawable_ratio = icon->getDrawableBounds().toFloat().getAspectRatio(true);
-    auto old_drawable_width = icon->getDrawableBounds().getWidth();
-    auto old_drawable_height = icon->getDrawableBounds().getHeight();
-    auto new_drawable_height = (new_viewbox_height * old_drawable_height) / old_viewbox_height;
-    auto new_drawable_width = new_drawable_height * drawable_ratio;
+    const float drawable_ratio = icon->getDrawableBounds().toFloat().getAspectRatio(true);
+    // const auto old_drawable_width = icon->getDrawableBounds().getWidth();
+    const auto old_drawable_height = icon->getDrawableBounds().getHeight();
+    const auto new_drawable_height = (new_viewbox_height * old_drawable_height) / old_viewbox_height;
+    const auto new_drawable_width = new_drawable_height * drawable_ratio;
 
-    icon->setBounds(0, 0, new_viewbox_width, new_viewbox_height);
+    icon->setBounds(0, 0,
+        static_cast<int>(std::ceil(new_viewbox_width)),
+        static_cast<int>(std::ceil(new_viewbox_height))
+    );
 
     auto new_drawable_bounds = juce::Rectangle<float>(0,
         0,

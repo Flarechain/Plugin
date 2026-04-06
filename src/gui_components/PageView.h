@@ -9,7 +9,9 @@
 class PageView : public juce::Component
 {
 public:
-    PageView(const PatternList& pattern_list);
+    /// Creates a new PageView with a TabBar to navigate between pages.
+    explicit PageView(const PatternList& pattern_list);
+
     ~PageView() override = default;
 
     void resized() override;

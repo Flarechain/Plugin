@@ -25,6 +25,8 @@ EventView::EventView(const Pattern& pattern) : pattern(pattern)
 
 void EventView::paint(juce::Graphics& g)
 {
+    juce::ignoreUnused(g);
+
     if (pattern.has_empty_midi())
     {
         event_label.setAlpha(0.3f);

@@ -27,15 +27,17 @@ void MoreOptions::add_item(const juce::String& item_text, Icon item_icon, const 
 
 void MoreOptions::focusLost(FocusChangeType cause)
 {
-    // if focus is taken by other components (but not by MoreOptionsButton) close MoreOptionsMenu
-    // Note: MoreOptionsButton already closes menu on click, not on focus gained
+    juce::ignoreUnused(cause);
+
+    // if focus is taken by other components (but not by MoreOptionsButton), close MoreOptionsMenu
+    // Note: MoreOptionsButton already closes the menu on click, not on focus gained
     if (!isMouseOver(true)) { close_menu(); }
 }
 
 void MoreOptions::open_menu()
 {
-    auto top_component = getTopLevelComponent();
-    auto button_bounds = button.getLocalBounds();
+    const auto top_component = getTopLevelComponent();
+    const auto button_bounds = button.getLocalBounds();
 
     top_component->addAndMakeVisible(menu);
     menu.setVisible(true);

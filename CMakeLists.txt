@@ -72,6 +72,9 @@ target_compile_definitions(${PROJECT_NAME}
         JUCE_DISABLE_COREGRAPHICS_FONT_SMOOTHING=1
 )
 
+# Disable shadowing warnings
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-shadow)
+
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         juce::juce_analytics

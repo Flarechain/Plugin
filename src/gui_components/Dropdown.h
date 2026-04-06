@@ -9,10 +9,19 @@ template<typename T>
 class Dropdown : public juce::Component
 {
 public:
+    /// Creates a new Dropdown with the given width and default selected item.
+    ///
+    /// To add items to the menu, use add_item().
     Dropdown(int width, T default_item_id, juce::String default_item_text);
+
     ~Dropdown() override = default;
 
+    /// Adds a new item to the menu, specifying if it should be selected.
+    ///
+    /// Since only one item can be the selected one, the last one added with `selected = true` will become
+    /// the selected item.
     void add_item(T item_id, juce::String item_text, bool selected);
+
     T get_selected_item() const;
     std::function<void(Item<T>)> on_change;
 

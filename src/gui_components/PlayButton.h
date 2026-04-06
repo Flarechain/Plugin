@@ -6,6 +6,7 @@
 class PlayButton : public juce::Button
 {
 public:
+    /// Creates a new PlayButton.
     PlayButton();
 
     ~PlayButton() override = default;

@@ -6,7 +6,9 @@
 class LinkButton : public juce::Button
 {
 public:
-    LinkButton(juce::String text);
+    /// Creates a new LinkButton.
+    explicit LinkButton(const juce::String& text);
+
     ~LinkButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

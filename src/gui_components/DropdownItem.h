@@ -5,7 +5,9 @@
 class DropdownItem : public juce::ToggleButton
 {
 public:
+    /// Creates a new DropdownItem.
     DropdownItem(const juce::String& text, int width);
+
     ~DropdownItem() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

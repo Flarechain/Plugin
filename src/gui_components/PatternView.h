@@ -10,7 +10,8 @@
 class PatternView : public juce::Component
 {
 public:
-    PatternView(const Pattern& pattern);
+    /// Creates a new PatternView.
+    explicit PatternView(const Pattern& pattern);
 
     ~PatternView() override = default;
 

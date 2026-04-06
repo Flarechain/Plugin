@@ -35,9 +35,9 @@ PresetDropdown::PresetDropdown() : button("Init"), menu(154, 0, "Init")
     setSize(button.getWidth(), button.getHeight());
 }
 
-void PresetDropdown::add_preset(PresetId item_id, juce::String item_text, bool selected)
+void PresetDropdown::add_preset(const PresetId id, const juce::String& preset_name, const bool selected)
 {
-    if (item_id != INIT_ID) { menu.add_item(item_id, item_text, selected); }
+    if (id != INIT_ID) { menu.add_item(id, preset_name, selected); }
 }
 
 PresetId PresetDropdown::get_selected_preset() const
@@ -55,15 +55,17 @@ void PresetDropdown::clear()
 
 void PresetDropdown::focusLost(FocusChangeType cause)
 {
-    // if focus is taken by other components (but not by DropdownButton) close DropdownMenu
-    // Note: DropdownButton already closes menu on click, not on focus gained
+    juce::ignoreUnused(cause);
+
+    // if focus is taken by other components (but not by PresetDropdownButton), close DropdownMenu
+    // Note: PresetDropdownButton already closes the menu on click, not on focus gained
     if (!isMouseOver(true)) { close_menu(); }
 }
 
 void PresetDropdown::open_menu()
 {
-    auto top_component = getTopLevelComponent();
-    auto button_bounds = button.getLocalBounds();
+    const auto top_component = getTopLevelComponent();
+    const auto button_bounds = button.getLocalBounds();
 
     top_component->addAndMakeVisible(menu);
     menu.setVisible(true);

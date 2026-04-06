@@ -5,7 +5,9 @@
 class ToggleButton : public juce::ToggleButton
 {
 public:
-    ToggleButton(const juce::String& text);
+    /// Creates a new ToggleButton, used in TabBar.
+    explicit ToggleButton(const juce::String& text);
+
     ~ToggleButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

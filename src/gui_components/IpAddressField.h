@@ -7,6 +7,7 @@
 class IpAddressField : public juce::Component
 {
 public:
+    /// Creates a new IpAddressField.
     IpAddressField();
 
     ~IpAddressField() override = default;

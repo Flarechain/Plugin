@@ -8,7 +8,7 @@ enum class Page
     LiveDetection
 };
 
-static juce::String toString(const Page page)
+inline juce::String toString(const Page page)
 {
     switch (page)
     {

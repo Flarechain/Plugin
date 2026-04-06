@@ -3,15 +3,15 @@
 #include "DropdownButton.h"
 #include "palettes/Palette.h"
 
-DropdownButton::DropdownButton(const int width, juce::String text) : Button(text)
+DropdownButton::DropdownButton(const int width, const juce::String& text) : Button(text)
 {
     icon = IconPalette::Chevron(8, ColorPalette::Coffee500);
 
-    auto font = FontPalette::Text_S_Semibold;
-    setSize(width, font.getHeight() + PADDING_Y * 2);
+    const auto font = FontPalette::Text_S_Semibold;
+    setSize(width, static_cast<int>(std::ceil(font.getHeight())) + PADDING_Y * 2);
 }
 
-void DropdownButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void DropdownButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;
@@ -27,9 +27,9 @@ void DropdownButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool
     auto content_bounds = juce::Rectangle<int>(0,
         0,
         getWidth() - PADDING_X * 2,
-        font.getHeight()
+        static_cast<int>(std::ceil(font.getHeight()))
     );
-    juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
+    const juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(content_bounds, getLocalBounds());
 
     g.setFont(font);

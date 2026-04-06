@@ -29,20 +29,20 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
     }
 
     const int width = pattern_views.at(0)->getWidth() + GAP_PATTERN_EVENT + event_views.at(0)->getWidth();
-    int height = std::max(pattern_views.at(0)->getHeight(), event_views.at(0)->getHeight()) * MAX_VISIBLE_PATTERNS + GAP_PATTERNS * (MAX_VISIBLE_PATTERNS - 1);
+    const int height = std::max(pattern_views.at(0)->getHeight(), event_views.at(0)->getHeight()) * MAX_VISIBLE_PATTERNS + GAP_PATTERNS * (MAX_VISIBLE_PATTERNS - 1);
     setSize(width, height);
 }
 
 void PatternListView::resized()
 {
-    // no flexbox with "justify space between": number of patterns is variable, but gaps are fixed
+    // no flexbox with "justify space between": the number of patterns is variable, but gaps are fixed
     const int height = std::max(pattern_views.at(0)->getHeight(), event_views.at(0)->getHeight());
-    constexpr int x = 0;
     int y = 0;
     for (unsigned long i = 0; i < pattern_views.size(); i++)
     {
-        auto &pattern_view = pattern_views.at(i);
-        auto &event_view = event_views.at(i);
+        constexpr int x = 0;
+        const auto &pattern_view = pattern_views.at(i);
+        const auto &event_view = event_views.at(i);
         auto bounds = juce::Rectangle(
             x, y,
             pattern_view->getWidth() + GAP_PATTERN_EVENT + event_view->getWidth(),
@@ -50,11 +50,11 @@ void PatternListView::resized()
         );
 
         juce::RectanglePlacement placement { juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
-        auto pattern_bounds = placement.appliedTo(pattern_view->getLocalBounds(), bounds);
+        const auto pattern_bounds = placement.appliedTo(pattern_view->getLocalBounds(), bounds);
         pattern_view->setBounds(pattern_bounds);
 
         placement = juce::RectanglePlacement::xRight | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize;
-        auto event_bounds = placement.appliedTo(event_view->getLocalBounds(), bounds);
+        const auto event_bounds = placement.appliedTo(event_view->getLocalBounds(), bounds);
         event_view->setBounds(event_bounds);
 
         y += height + GAP_PATTERNS;

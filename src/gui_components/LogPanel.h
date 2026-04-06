@@ -10,12 +10,16 @@
 class LogPanel : public juce::Component
 {
 public:
+    /// Creates a new LogPanel.
     LogPanel(juce::uint8 num_logs, int width);
+
     ~LogPanel() override = default;
 
     void paint(juce::Graphics& g) override;
 
+    /// Adds a new log to the LogPanel with the given LogMessage.
     void add_log(LogMessage message);
+
     std::function<void()> on_open_file;
 
 private:

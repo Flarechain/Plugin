@@ -7,7 +7,7 @@ MoreOptionsButton::MoreOptionsButton() : Button("MORE OPTIONS")
     setSize(24, 24);
 }
 
-void MoreOptionsButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void MoreOptionsButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;

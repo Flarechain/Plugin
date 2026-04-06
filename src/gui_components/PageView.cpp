@@ -8,7 +8,7 @@ PageView::PageView(const PatternList& pattern_list) :
     setInterceptsMouseClicks(false, true);
 
     current_page = tab_bar.get_current_page();
-    tab_bar.on_change = [this](Page page)
+    tab_bar.on_change = [this](const Page page)
     {
         current_page = page;
         resized();
@@ -32,7 +32,7 @@ PageView::PageView(const PatternList& pattern_list) :
 void PageView::resized()
 {
     juce::RectanglePlacement placement { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yTop | juce::RectanglePlacement::doNotResize };
-    auto tab_bar_bounds = placement.appliedTo(tab_bar.getLocalBounds(), getLocalBounds());
+    const auto tab_bar_bounds = placement.appliedTo(tab_bar.getLocalBounds(), getLocalBounds());
     tab_bar.setBounds(tab_bar_bounds);
 
     auto page_content_bounds = juce::Rectangle<int>(0, tab_bar.getHeight(), getWidth(), getHeight() - tab_bar.getHeight());

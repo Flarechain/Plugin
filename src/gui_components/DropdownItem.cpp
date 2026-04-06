@@ -1,13 +1,13 @@
 #include "DropdownItem.h"
 #include "palettes/Palette.h"
 
-DropdownItem::DropdownItem(const juce::String& text, int width) : juce::ToggleButton(text)
+DropdownItem::DropdownItem(const juce::String& text, const int width) : juce::ToggleButton(text)
 {
-    auto font = FontPalette::Text_S_Medium;
+    const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING_Y * 2);
 }
 
-void DropdownItem::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void DropdownItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);
@@ -28,7 +28,7 @@ void DropdownItem::paintButton(juce::Graphics& g, bool isMouseOverButton, bool i
         static_cast<float>(getHeight()),
         4);
 
-    auto text_bounds = getLocalBounds().reduced(PADDING_X, PADDING_Y);
+    const auto text_bounds = getLocalBounds().reduced(PADDING_X, PADDING_Y);
 
     auto font_color = ColorPalette::Coffee500;
     if (getToggleState())   { font_color = ColorPalette::Linen500; }

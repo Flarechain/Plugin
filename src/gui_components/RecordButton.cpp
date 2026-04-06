@@ -31,7 +31,7 @@ void RecordButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, 
         icon_width + gap + text_width,
         text_height
     );
-    juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
+    const juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(content_bounds, getLocalBounds());
 
     g.setFont(font);

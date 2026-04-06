@@ -3,15 +3,15 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "LogEntry.h"
 
-LogEntry::LogEntry(LogMessage message, const int width, const bool is_most_recent) : message(message), is_most_recent(is_most_recent)
+LogEntry::LogEntry(LogMessage message, const int width, const bool is_most_recent) : message(std::move(message)), is_most_recent(is_most_recent)
 {
-    auto font = FontPalette::Text_S_Medium;
-    setSize(width, font.getHeight() + PADDING_Y_HIGHLIGHT * 2 + PADDING_Y * 2);
+    const auto font = FontPalette::Text_S_Medium;
+    setSize(width, static_cast<int>(font.getHeight()) + PADDING_Y_HIGHLIGHT * 2 + PADDING_Y * 2);
 }
 
 void LogEntry::paint(juce::Graphics& g)
 {
-    auto fill_color = this->is_most_recent ? ColorPalette::Linen200 : ColorPalette::Linen100.withAlpha(0.0f);
+    const auto fill_color = this->is_most_recent ? ColorPalette::Linen200 : ColorPalette::Linen100.withAlpha(0.0f);
     auto font = FontPalette::Text_S_Medium;
 
     g.setColour(fill_color);
@@ -21,7 +21,6 @@ void LogEntry::paint(juce::Graphics& g)
     float y = 0;
     float text_width = 0;
     float text_height = 0;
-    juce::Rectangle<float> bounds(x, y, 0, 0);
 
     for (const LogText& text : message)
     {
@@ -38,13 +37,13 @@ void LogEntry::paint(juce::Graphics& g)
             text_height = font.getHeight();
         }
 
-        y = (getHeight() - text_height) / 2;
-        bounds = juce::Rectangle(x, y, text_width, text_height);
+        y = (static_cast<float>(getHeight()) - text_height) / 2;
+        const auto bounds = juce::Rectangle(x, y, text_width, text_height);
 
         if (text.is_highlighted())
         {
-            auto highlight_color = this->is_most_recent ? ColorPalette::Linen300 : ColorPalette::Linen200;
-            g.setColour(ColorPalette::Linen300);
+            const auto highlight_color = this->is_most_recent ? ColorPalette::Linen300 : ColorPalette::Linen200;
+            g.setColour(highlight_color);
             g.fillRoundedRectangle(bounds, 4);
         }
 

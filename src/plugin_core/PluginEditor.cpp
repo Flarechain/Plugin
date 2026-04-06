@@ -63,18 +63,14 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     setSize(800, 600);
 }
 
-FlarechainAudioProcessorEditor::~FlarechainAudioProcessorEditor()
-{
-}
-
 //==============================================================================
 void FlarechainAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    juce::Image backgroundImage = juce::ImageFileFormat::loadFrom(BinaryData::background_png, BinaryData::background_pngSize);
+    const juce::Image backgroundImage = juce::ImageFileFormat::loadFrom(BinaryData::background_png, BinaryData::background_pngSize);
     g.drawImage(backgroundImage, getLocalBounds().toFloat(), juce::RectanglePlacement::stretchToFit);
 
     logo->drawAt(g,
-        static_cast<float>(getWidth() / 2) - static_cast<float>(logo->getWidth() / 2),
+        static_cast<float>(getWidth() / 2.0) - static_cast<float>(logo->getWidth() / 2.0),
         PADDING,
         1.0f
     );
@@ -83,7 +79,7 @@ void FlarechainAudioProcessorEditor::paint (juce::Graphics& g)
 void FlarechainAudioProcessorEditor::resized()
 {
     // header section
-    auto header_bounds = juce::Rectangle<int>(PADDING, PADDING, getWidth() - PADDING * 2, 76);
+    const auto header_bounds = juce::Rectangle<int>(PADDING, PADDING, getWidth() - PADDING * 2, 76);
 
     int gap = 4;
     auto preset_bounds = juce::Rectangle<int>(0,
@@ -100,7 +96,7 @@ void FlarechainAudioProcessorEditor::resized()
     preset_dropdown.setBounds(placement.appliedTo(preset_dropdown.getLocalBounds(), preset_bounds));
 
     gap = 16;
-    auto save_as_bounds = preset_bounds.withTrimmedLeft(preset_dropdown.getWidth() + gap)
+    const auto save_as_bounds = preset_bounds.withTrimmedLeft(preset_dropdown.getWidth() + gap)
         .withTrimmedTop(preset_bounds.getHeight() - preset_dropdown.getHeight());
     placement = { juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
     save_as_button.setBounds(placement.appliedTo(save_as_button.getLocalBounds(), save_as_bounds));
@@ -155,7 +151,7 @@ void FlarechainAudioProcessorEditor::resized()
 
 void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern_id)
 {
-    auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
     modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to import MIDI into Pattern " + pattern_name + "?",
         "This will overwrite the existing pattern and cannot be undone.",
         "Import MIDI",
@@ -177,7 +173,7 @@ void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern
 
 void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern_id)
 {
-    auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
     modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to delete Pattern " + pattern_name + "?",
         "This cannot be undone.",
         "Delete pattern",

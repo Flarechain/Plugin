@@ -6,7 +6,9 @@
 class DropdownButton : public juce::Button
 {
 public:
-    DropdownButton(int width, juce::String text);
+    /// Creates a new DropdownButton.
+    DropdownButton(int width, const juce::String& text);
+
     ~DropdownButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

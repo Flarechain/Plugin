@@ -3,11 +3,11 @@
 
 MoreOptionsItem::MoreOptionsItem(const juce::String& text, Icon icon, int width) : Button(text), icon(std::move(icon))
 {
-    auto font = FontPalette::Text_S_Medium;
+    const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING * 2);
 }
 
-void MoreOptionsItem::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void MoreOptionsItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);
@@ -21,7 +21,7 @@ void MoreOptionsItem::paintButton(juce::Graphics& g, bool isMouseOverButton, boo
         static_cast<float>(getHeight()),
         4);
 
-    auto content_bounds = getLocalBounds().reduced(PADDING, PADDING);
+    const auto content_bounds = getLocalBounds().reduced(PADDING, PADDING);
 
     g.setFont(FontPalette::Text_S_Medium);
     g.setColour(ColorPalette::Coffee500);

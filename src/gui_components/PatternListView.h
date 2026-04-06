@@ -8,7 +8,9 @@
 class PatternListView : public juce::Component
 {
 public:
-    PatternListView(const PatternList& pattern_list);
+    /// Creates a new PatternListView, displaying a list of PatternViews.
+    explicit PatternListView(const PatternList& pattern_list);
+
     ~PatternListView() override = default;
 
     void resized() override;

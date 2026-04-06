@@ -6,7 +6,9 @@
 class MoreOptionsItem : public juce::Button
 {
 public:
+    /// Creates a new MoreOptionsItem, used in a MoreOptionsMenu.
     MoreOptionsItem(const juce::String& text, Icon icon, int width);
+
     ~MoreOptionsItem() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;

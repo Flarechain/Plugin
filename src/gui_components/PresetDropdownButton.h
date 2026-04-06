@@ -6,12 +6,16 @@
 class PresetDropdownButton : public juce::Button
 {
 public:
-    PresetDropdownButton(juce::String text);
+    /// Creates a new PresetDropdownButton with dynamic size based on text length (but bounded to a maximum width).
+    explicit PresetDropdownButton(const juce::String& text);
+
     ~PresetDropdownButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
     void resized() override;
-    void setDropdownText(juce::String text);
+
+    /// Changes text of PresetDropdownButton, resizing the component dynamically.
+    void setDropdownText(const juce::String& text);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PresetDropdownButton)

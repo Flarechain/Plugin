@@ -7,7 +7,9 @@
 class LogEntry : public juce::Component
 {
 public:
+    /// Creates a new LogEntry that displays the given LogMessage.
     LogEntry(LogMessage message, int width, bool is_most_recent);
+
     ~LogEntry() override = default;
 
     void paint(juce::Graphics& g) override;

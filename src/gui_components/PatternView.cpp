@@ -30,6 +30,8 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
 
 void PatternView::paint(juce::Graphics& g)
 {
+    juce::ignoreUnused(g);
+
     if (pattern.has_empty_midi())
     {
         pattern_label.setAlpha(0.3f);

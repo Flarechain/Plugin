@@ -3,11 +3,11 @@
 
 ToggleButton::ToggleButton(const juce::String& text) : juce::ToggleButton(text)
 {
-    auto font = FontPalette::Text_S_Medium;
+    const auto font = FontPalette::Text_S_Medium;
     setSize(PADDING_X * 2 + font.getStringWidth(getButtonText()), PADDING_Y * 2 + static_cast<int>(font.getHeight()));
 }
 
-void ToggleButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown)
+void ToggleButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);
@@ -26,7 +26,7 @@ void ToggleButton::paintButton(juce::Graphics& g, bool isMouseOverButton, bool i
     g.fillRoundedRectangle(0, 0,
         static_cast<float>(getWidth()),
         static_cast<float>(getHeight()),
-        static_cast<float>(getHeight() / 2));
+        static_cast<float>(getHeight() / 2.0));
 
     auto font_color = ColorPalette::Coffee500;
     if (getToggleState()) { font_color = ColorPalette::Linen500; }

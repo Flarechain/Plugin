@@ -3,7 +3,7 @@
 #include "palettes/Palette.h"
 
 template <typename T>
-DropdownMenu<T>::DropdownMenu(const int width, T default_item_id, juce::String default_item_text) : width(width)
+DropdownMenu<T>::DropdownMenu(const int width, T default_item_id, const juce::String& default_item_text) : width(width)
 {
     add_item(default_item_id, default_item_text, true);
 }
@@ -11,7 +11,7 @@ DropdownMenu<T>::DropdownMenu(const int width, T default_item_id, juce::String d
 template <typename T>
 void DropdownMenu<T>::paint(juce::Graphics& g)
 {
-    auto fill_color = ColorPalette::Linen400;
+    const auto fill_color = ColorPalette::Linen400;
     g.setColour(fill_color);
     g.fillRoundedRectangle(0, 0,
         static_cast<float>(getWidth()),
@@ -20,7 +20,7 @@ void DropdownMenu<T>::paint(juce::Graphics& g)
 
     constexpr int x = PADDING;
     int y = PADDING;
-    for (auto& item : items)
+    for (const auto& item : items)
     {
         item->setTopLeftPosition(x, y);
         y += item->getHeight();
@@ -28,7 +28,7 @@ void DropdownMenu<T>::paint(juce::Graphics& g)
 }
 
 template <typename T>
-void DropdownMenu<T>::add_item(T id, juce::String text, bool selected)
+void DropdownMenu<T>::add_item(T id, juce::String text, const bool selected)
 {
     auto item = std::make_unique<DropdownItem>(text, width - PADDING * 2);
     item->setRadioGroupId(1);

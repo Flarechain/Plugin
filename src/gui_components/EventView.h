@@ -9,7 +9,9 @@
 class EventView : public juce::Component
 {
 public:
-    EventView(const Pattern& pattern);
+    /// Creates a new EventView, displaying the pattern's event name, IP address field, and OSC message text field.
+    explicit EventView(const Pattern& pattern);
+
     ~EventView() override = default;
 
     void paint(juce::Graphics& g) override;

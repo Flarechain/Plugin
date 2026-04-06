@@ -7,7 +7,9 @@
 class PlaybackControl : public juce::Component
 {
 public:
+    /// Creates a new PlaybackControl, composed of a PlayButton and a PlaybackBar.
     PlaybackControl();
+
     ~PlaybackControl() override = default;
 
     void resized() override;

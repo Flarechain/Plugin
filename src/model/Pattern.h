@@ -9,13 +9,13 @@ typedef juce::String PatternName;
 class Pattern
 {
 public:
-    Pattern(PatternId id);
+    explicit Pattern(PatternId id);
     ~Pattern() = default;
 
     [[nodiscard]] PatternId get_id() const { return id; }
-    PatternName get_name() const { return name; }
-    juce::MidiMessage get_midi() const { return midi; }
-    bool has_empty_midi() const { return midi.getRawDataSize() > 0; }
+    [[nodiscard]] PatternName get_name() const { return name; }
+    [[nodiscard]] juce::MidiMessage get_midi() const { return midi; }
+    [[nodiscard]] bool has_empty_midi() const { return midi.getRawDataSize() > 0; }
 
 private:
     PatternId id;

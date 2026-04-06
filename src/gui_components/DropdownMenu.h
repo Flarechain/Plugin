@@ -11,7 +11,9 @@ template<typename T>
 class DropdownMenu : public juce::Component
 {
 public:
-    DropdownMenu(int width, T default_item_id, juce::String default_item_text);
+    /// Creates a new DropdownMenu with the given width and default item.
+    DropdownMenu(int width, T default_item_id, const juce::String& default_item_text);
+
     ~DropdownMenu() override = default;
 
     void paint(juce::Graphics& g) override;

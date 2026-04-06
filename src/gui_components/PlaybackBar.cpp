@@ -18,7 +18,7 @@ void PlaybackBar::paint(juce::Graphics& g)
         0,
         static_cast<float>(getWidth()),
         static_cast<float>(getHeight()),
-        static_cast<float>(getHeight() / 2)
+        static_cast<float>(getHeight() / 2.0)
     );
 
     // progress bar
@@ -37,7 +37,7 @@ void PlaybackBar::paint(juce::Graphics& g)
         stroke_weight,
         static_cast<float>(inner_bar_width),
         static_cast<float>(inner_bar_height),
-        static_cast<float>(inner_bar_height / 2)
+        static_cast<float>(inner_bar_height / 2.0)
     );
 }
 

@@ -45,8 +45,10 @@ T Dropdown<T>::get_selected_item() const
 template <typename T>
 void Dropdown<T>::focusLost(FocusChangeType cause)
 {
-    // if focus is taken by other components (but not by DropdownButton) close DropdownMenu
-    // Note: DropdownButton already closes menu on click, not on focus gained
+    juce::ignoreUnused(cause);
+
+    // if focus is taken by other components (but not by DropdownButton), close DropdownMenu
+    // Note: DropdownButton already closes the menu on click, not on focus gained
     if (!isMouseOver(true)) { close_menu(); }
 }
 
@@ -54,7 +56,7 @@ template <typename T>
 void Dropdown<T>::open_menu()
 {
     auto top_component = getTopLevelComponent();
-    auto button_bounds = button.getLocalBounds();
+    const auto button_bounds = button.getLocalBounds();
 
     top_component->addAndMakeVisible(menu);
     menu.setVisible(true);

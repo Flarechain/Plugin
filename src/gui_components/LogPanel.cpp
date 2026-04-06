@@ -46,7 +46,7 @@ void LogPanel::paint(juce::Graphics& g)
     g.drawText("Log",
         label_bounds,
         juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid,
-        1.0f);
+        true);
 
     const juce::RectanglePlacement placement { juce::RectanglePlacement::xRight | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
     const auto button_bounds = placement.appliedTo(link_button.getLocalBounds(), label_bounds);
@@ -68,7 +68,7 @@ void LogPanel::add_log(LogMessage message)
     log_messages.push_front(std::move(message));
     if (log_messages.size() > num_logs) { log_messages.pop_back(); }
 
-    for (juce::uint8 i = 0; i < log_messages.size(); i++)
+    for (juce::uint32 i = 0; i < log_messages.size(); i++)
     {
         logs.at(i)->set_message(log_messages.at(i));
     }

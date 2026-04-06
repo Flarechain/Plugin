@@ -6,7 +6,9 @@
 class MoreOptionsMenu : public juce::Component
 {
 public:
-    MoreOptionsMenu(int width);
+    /// Creates a new MoreOptionsMenu.
+    explicit MoreOptionsMenu(int width);
+
     ~MoreOptionsMenu() override = default;
 
     void paint(juce::Graphics& g) override;
@@ -19,7 +21,8 @@ private:
 
     std::vector<std::unique_ptr<MoreOptionsItem>> items;
 
-    void add_item(juce::String text, Icon icon, std::function<void()> on_click);
+    /// Adds a new item to the menu with the given text, icon, and action to do when chosen.
+    void add_item(const juce::String& text, Icon icon, std::function<void()> on_click);
 
     friend class MoreOptions;
 };

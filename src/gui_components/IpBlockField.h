@@ -5,7 +5,9 @@
 class IpBlockField : public juce::TextEditor
 {
 public:
+    /// Creates a new IpBlockField.
     IpBlockField();
+
     ~IpBlockField() override = default;
 
     void paint(juce::Graphics& g) override;

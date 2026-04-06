@@ -3,7 +3,7 @@
 #include "LinkButton.h"
 #include "palettes/Palette.h"
 
-LinkButton::LinkButton(juce::String text) : Button(std::move(text))
+LinkButton::LinkButton(const juce::String& text) : Button(text)
 {
     icon = IconPalette::Arrow(9, ColorPalette::Coffee500);
 
@@ -29,12 +29,12 @@ void LinkButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, co
     auto content_bounds = juce::Rectangle<int>(0,
         0,
         getWidth() - PADDING_X * 2,
-        font.getHeight()
+        static_cast<int>(std::ceil(font.getHeight()))
     );
-    juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
+    const juce::RectanglePlacement placement { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
     content_bounds = placement.appliedTo(content_bounds, getLocalBounds());
 
-    auto text_bounds = content_bounds.withTrimmedLeft(icon->getWidth() + GAP);
+    const auto text_bounds = content_bounds.withTrimmedLeft(icon->getWidth() + GAP);
     g.setFont(font);
     g.setColour(ColorPalette::Coffee500);
     g.drawText(getButtonText(), text_bounds, juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid, true);

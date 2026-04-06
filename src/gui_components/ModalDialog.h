@@ -8,7 +8,18 @@
 class ModalDialog : public juce::Component
 {
 public:
-    ModalDialog(juce::String title, juce::String subtitle, juce::String primary_action_label, juce::String secondary_action_label);
+    /// Creates a new ModalDialog, displaying some warning information to the user and forcing them to choose between
+    /// a primary action (e.g. "Delete") and a secondary action (e.g. "Cancel").
+    ///
+    /// To define the behavior of the buttons, assign callbacks to `on_primary_action` and `on_secondary_action` after creating
+    /// the dialog.
+    ///
+    /// @param title The main message displayed at the top of the dialog.
+    /// @param subtitle A secondary descriptive text shown below the title, used to provide additional context or warnings.
+    /// @param primary_action_label Text to display on the primary button.
+    /// @param secondary_action_label Text to display on the secondary button.
+    ModalDialog(juce::String title, juce::String subtitle, const juce::String& primary_action_label, const juce::String& secondary_action_label);
+
     ~ModalDialog() override = default;
 
     void paint(juce::Graphics& g) override;

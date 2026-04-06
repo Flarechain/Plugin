@@ -112,7 +112,7 @@ void IpAddressField::resized()
     fb.performLayout(ip_field_area.toFloat());
 
     gap = 4;
-    auto ip_label_area = juce::Rectangle<int>(
+    const auto ip_label_area = juce::Rectangle<int>(
         ip_field_area.getX() - gap - ip_label.getWidth(),
         ip_field_area.getY(),
         ip_label.getWidth(),

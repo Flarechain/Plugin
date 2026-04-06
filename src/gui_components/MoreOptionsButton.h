@@ -6,6 +6,7 @@
 class MoreOptionsButton : public juce::Button
 {
 public:
+    /// Creates a new MoreOptionsButton.
     MoreOptionsButton();
 
     ~MoreOptionsButton() override = default;

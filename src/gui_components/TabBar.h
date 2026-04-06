@@ -7,7 +7,9 @@
 class TabBar : public juce::Component
 {
 public:
-    TabBar(std::vector<Page> pages);
+    /// Creates a new TabBar with the given pages.
+    explicit TabBar(std::vector<Page> pages);
+
     ~TabBar() override = default;
 
     void paint(juce::Graphics& g) override;

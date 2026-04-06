@@ -10,7 +10,7 @@ class FlarechainAudioProcessorEditor final : public juce::AudioProcessorEditor
 {
 public:
     explicit FlarechainAudioProcessorEditor (FlarechainAudioProcessor&);
-    ~FlarechainAudioProcessorEditor() override;
+    ~FlarechainAudioProcessorEditor() override = default;
 
     //==============================================================================
     void paint (juce::Graphics&) override;

@@ -5,7 +5,9 @@
 class TextField : public juce::TextEditor
 {
 public:
+    /// Creates a new TextField.
     TextField();
+
     ~TextField() override = default;
 
     void paint(juce::Graphics& g) override;
