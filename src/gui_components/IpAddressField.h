@@ -1,7 +1,6 @@
 #pragma once
 
 #include <juce_gui_basics/juce_gui_basics.h>
-#include "IpBlockField.h"
 #include "palettes/IconPalette.h"
 
 class IpAddressField : public juce::Component
@@ -17,6 +16,20 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IpAddressField)
+
+    /// IpAddressField's subcomponent for displaying a single block field of the IP address.
+    class IpBlockField : public juce::TextEditor
+    {
+    public:
+        IpBlockField();
+
+        ~IpBlockField() override = default;
+
+        void paint(juce::Graphics& g) override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IpBlockField)
+    };
 
     Icon icon;
     juce::Label ip_label;

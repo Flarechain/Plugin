@@ -1,9 +1,9 @@
 #pragma once
 
-#include "DropdownButton.h"
 #include "palettes/Palette.h"
 
-DropdownButton::DropdownButton(const int width, const juce::String& text) : Button(text)
+template <typename T>
+Dropdown<T>::DropdownButton::DropdownButton(const int width, const juce::String& text) : Button(text)
 {
     icon = IconPalette::Chevron(8, ColorPalette::Coffee500);
 
@@ -11,7 +11,8 @@ DropdownButton::DropdownButton(const int width, const juce::String& text) : Butt
     setSize(width, static_cast<int>(std::ceil(font.getHeight())) + PADDING_Y * 2);
 }
 
-void DropdownButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+template <typename T>
+void Dropdown<T>::DropdownButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;

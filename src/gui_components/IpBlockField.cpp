@@ -1,7 +1,7 @@
-#include "IpBlockField.h"
+#include "IpAddressField.h"
 #include "palettes/Palette.h"
 
-IpBlockField::IpBlockField()
+IpAddressField::IpBlockField::IpBlockField()
 {
     setIndents(2, 0);
     setBorder(juce::BorderSize(0));
@@ -26,7 +26,7 @@ IpBlockField::IpBlockField()
     setSize(32, 24);
 }
 
-void IpBlockField::paint(juce::Graphics& g)
+void IpAddressField::IpBlockField::paint(juce::Graphics& g)
 {
     g.setColour(ColorPalette::Linen100);
     g.fillRoundedRectangle(0, 0, static_cast<float>(getWidth()), static_cast<float>(getHeight()), 8);

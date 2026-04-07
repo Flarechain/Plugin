@@ -1,5 +1,4 @@
 #include "StatusBar.h"
-
 #include "palettes/Palette.h"
 
 StatusBar::StatusBar(Status status, juce::String  message) : status(status), message(std::move(message))

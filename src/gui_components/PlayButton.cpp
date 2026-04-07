@@ -1,14 +1,14 @@
-#include "PlayButton.h"
+#include "PlaybackControl.h"
 #include "palettes/Palette.h"
 
-PlayButton::PlayButton() : Button("PLAY")
+PlaybackControl::PlayButton::PlayButton() : Button("PLAY")
 {
     is_playing = false;
     icon = IconPalette::Play(8, ColorPalette::Coffee500);
     setSize(22, 22);
 }
 
-void PlayButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+void PlaybackControl::PlayButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100;
@@ -28,7 +28,7 @@ void PlayButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, co
     );
 }
 
-void PlayButton::play()
+void PlaybackControl::PlayButton::play()
 {
     is_playing = true;
 }

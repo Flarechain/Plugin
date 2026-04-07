@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LinkButton.h"
 #include "palettes/Palette.h"
 

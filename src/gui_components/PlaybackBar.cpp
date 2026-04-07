@@ -1,13 +1,13 @@
-#include "PlaybackBar.h"
+#include "PlaybackControl.h"
 #include "palettes/Palette.h"
 
-PlaybackBar::PlaybackBar(double &progress) : juce::ProgressBar(progress)
+PlaybackControl::PlaybackBar::PlaybackBar(double &progress) : juce::ProgressBar(progress)
 {
     is_playing = false;
     setSize(250, 12);
 }
 
-void PlaybackBar::paint(juce::Graphics& g)
+void PlaybackControl::PlaybackBar::paint(juce::Graphics& g)
 {
     constexpr int stroke_weight = 2;
 
@@ -41,7 +41,7 @@ void PlaybackBar::paint(juce::Graphics& g)
     );
 }
 
-void PlaybackBar::play()
+void PlaybackControl::PlaybackBar::play()
 {
     is_playing = true;
 }

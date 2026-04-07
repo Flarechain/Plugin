@@ -57,3 +57,5 @@ void MoreOptions::close_menu()
     menu.setVisible(false);
     menu.giveAwayKeyboardFocus();
 }
+
+// TODO: don't show delete pattern if pattern has no MIDI to delete

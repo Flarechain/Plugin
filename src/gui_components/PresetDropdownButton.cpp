@@ -1,9 +1,7 @@
-#pragma once
-
-#include "PresetDropdownButton.h"
+#include "PresetDropdown.h"
 #include "palettes/Palette.h"
 
-PresetDropdownButton::PresetDropdownButton(const juce::String& text) : Button(text)
+PresetDropdown::PresetDropdownButton::PresetDropdownButton(const juce::String& text) : Button(text)
 {
     icon = IconPalette::Chevron(12, ColorPalette::Coffee500);
 
@@ -13,7 +11,7 @@ PresetDropdownButton::PresetDropdownButton(const juce::String& text) : Button(te
     setSize(width, height);
 }
 
-void PresetDropdownButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+void PresetDropdown::PresetDropdownButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);
@@ -45,7 +43,7 @@ void PresetDropdownButton::paintButton(juce::Graphics& g, const bool isMouseOver
     );
 }
 
-void PresetDropdownButton::resized()
+void PresetDropdown::PresetDropdownButton::resized()
 {
     auto const font = FontPalette::Text_XL_Semibold;
     int const width = (icon->getWidth() + GAP + font.getStringWidth(getButtonText()) + PADDING_X * 2) < MAX_WIDTH ?
@@ -54,7 +52,7 @@ void PresetDropdownButton::resized()
     setSize(width, height);
 }
 
-void PresetDropdownButton::setDropdownText(const juce::String& text)
+void PresetDropdown::PresetDropdownButton::setDropdownText(const juce::String& text)
 {
     setButtonText(text);
     resized();

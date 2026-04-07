@@ -1,5 +1,3 @@
-#pragma once
-
 #include "PresetDropdown.h"
 
 PresetId INIT_ID = 0;

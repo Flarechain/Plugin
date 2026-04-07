@@ -1,13 +1,13 @@
-#include "ToggleButton.h"
+#include "TabBar.h"
 #include "palettes/Palette.h"
 
-ToggleButton::ToggleButton(const juce::String& text) : juce::ToggleButton(text)
+TabBar::ToggleButton::ToggleButton(const juce::String& text) : juce::ToggleButton(text)
 {
     const auto font = FontPalette::Text_S_Medium;
     setSize(PADDING_X * 2 + font.getStringWidth(getButtonText()), PADDING_Y * 2 + static_cast<int>(font.getHeight()));
 }
 
-void ToggleButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+void TabBar::ToggleButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);

@@ -2,7 +2,6 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "DropdownMenu.h"
-#include "DropdownButton.h"
 #include "DropdownTypes.tpp"
 
 template<typename T>
@@ -28,6 +27,24 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dropdown)
 
+    /// Dropdown's subcomponent representing the clickable button that displays the currently selected item.
+    class DropdownButton : public juce::Button
+    {
+    public:
+        DropdownButton(int width, const juce::String& text);
+
+        ~DropdownButton() override = default;
+
+        void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DropdownButton)
+
+        Icon icon;
+        static constexpr int PADDING_X = 8;
+        static constexpr int PADDING_Y = 2;
+    };
+
     Item<T> selected_item;
 
     DropdownButton button;
@@ -40,3 +57,4 @@ private:
 };
 
 #include "Dropdown.tpp"
+#include "DropdownButton.tpp"

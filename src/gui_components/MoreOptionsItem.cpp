@@ -1,13 +1,13 @@
-#include "MoreOptionsItem.h"
+#include "MoreOptionsMenu.h"
 #include "palettes/Palette.h"
 
-MoreOptionsItem::MoreOptionsItem(const juce::String& text, Icon icon, int width) : Button(text), icon(std::move(icon))
+MoreOptionsMenu::MoreOptionsItem::MoreOptionsItem(const juce::String& text, Icon icon, int width) : Button(text), icon(std::move(icon))
 {
     const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING * 2);
 }
 
-void MoreOptionsItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+void MoreOptionsMenu::MoreOptionsItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);

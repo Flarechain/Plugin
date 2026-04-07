@@ -1,7 +1,6 @@
 #pragma once
 
 #include <juce_gui_basics/juce_gui_basics.h>
-#include "DropdownItem.h"
 #include "DropdownTypes.tpp"
 
 template<typename T>
@@ -25,6 +24,23 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DropdownMenu)
 
+    /// DropdownMenu's subcomponent for displaying a single item.
+    class DropdownItem : public juce::ToggleButton
+    {
+    public:
+        DropdownItem(const juce::String& text, int width);
+
+        ~DropdownItem() override = default;
+
+        void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DropdownItem)
+
+        static constexpr int PADDING_X = 8;
+        static constexpr int PADDING_Y = 2;
+    };
+
     Item<T> selected_item;
     int width;
     static constexpr int PADDING = 4;
@@ -40,3 +56,4 @@ private:
 };
 
 #include "DropdownMenu.tpp"
+#include "DropdownItem.tpp"

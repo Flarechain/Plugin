@@ -1,13 +1,16 @@
-#include "DropdownItem.h"
+#pragma once
+
 #include "palettes/Palette.h"
 
-DropdownItem::DropdownItem(const juce::String& text, const int width) : juce::ToggleButton(text)
+template <typename T>
+DropdownMenu<T>::DropdownItem::DropdownItem(const juce::String& text, const int width) : juce::ToggleButton(text)
 {
     const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING_Y * 2);
 }
 
-void DropdownItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
+template <typename T>
+void DropdownMenu<T>::DropdownItem::paintButton(juce::Graphics& g, const bool isMouseOverButton, const bool isButtonDown)
 {
     // button fill color
     auto fill_color = ColorPalette::Linen100.withAlpha(0.0f);

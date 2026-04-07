@@ -1,5 +1,4 @@
 #include "TabBar.h"
-
 #include "palettes/ColorPalette.h"
 
 constexpr int STROKE_WIDTH = 2;

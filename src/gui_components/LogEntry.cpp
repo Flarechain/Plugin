@@ -1,15 +1,13 @@
-#pragma once
-
 #include <juce_gui_basics/juce_gui_basics.h>
-#include "LogEntry.h"
+#include "LogPanel.h"
 
-LogEntry::LogEntry(LogMessage message, const int width, const bool is_most_recent) : message(std::move(message)), is_most_recent(is_most_recent)
+LogPanel::LogEntry::LogEntry(LogMessage message, const int width, const bool is_most_recent) : message(std::move(message)), is_most_recent(is_most_recent)
 {
     const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING_Y_HIGHLIGHT * 2 + PADDING_Y * 2);
 }
 
-void LogEntry::paint(juce::Graphics& g)
+void LogPanel::LogEntry::paint(juce::Graphics& g)
 {
     const auto fill_color = this->is_most_recent ? ColorPalette::Linen200 : ColorPalette::Linen100.withAlpha(0.0f);
     auto font = FontPalette::Text_S_Medium;
@@ -60,7 +58,7 @@ void LogEntry::paint(juce::Graphics& g)
     }
 }
 
-void LogEntry::set_message(LogMessage message)
+void LogPanel::LogEntry::set_message(LogMessage message)
 {
     this->message = std::move(message);
     repaint();
