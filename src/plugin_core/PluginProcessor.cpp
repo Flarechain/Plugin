@@ -156,8 +156,34 @@ void FlarechainAudioProcessor::setStateInformation (const void* data, int sizeIn
 }
 
 //==============================================================================
-// This creates new instances of the plugin..
+// This creates new instances of the plugin.
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new FlarechainAudioProcessor();
+}
+
+void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSequence midi) const
+{
+    normalize_midi(midi);
+    pattern_list.get(id).set_midi(std::move(midi));
+}
+
+void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
+{
+    if (midi.getNumEvents() == 0)   return;
+
+    midi.sort();
+    midi.updateMatchedPairs();
+
+    const double offset = midi.getEventPointer(0)->message.getTimeStamp();
+
+    for (int i = 0; i < midi.getNumEvents(); ++i)
+    {
+        auto* event = midi.getEventPointer(i);
+        event->message.setTimeStamp(
+            event->message.getTimeStamp() - offset
+        );
+    }
+
+    midi.updateMatchedPairs();
 }

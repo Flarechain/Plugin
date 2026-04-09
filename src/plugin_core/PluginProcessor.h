@@ -3,15 +3,12 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "../model/PatternList.h"
 
-//==============================================================================
 class FlarechainAudioProcessor final : public juce::AudioProcessor
 {
 public:
-    //==============================================================================
     FlarechainAudioProcessor();
     ~FlarechainAudioProcessor() override;
 
-    //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -20,11 +17,9 @@ public:
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
     using AudioProcessor::processBlock;
 
-    //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
 
-    //==============================================================================
     const juce::String getName() const override;
 
     bool acceptsMidi() const override;
@@ -32,22 +27,27 @@ public:
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
 
-    //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
 
-    //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    //==============================================================================
     PatternList& get_pattern_list() { return pattern_list; }
+
+    /// Sets the MIDI sequence for the specified pattern. The given MIDI is normalized before being stored in the pattern.
+    void set_midi(PatternId id, juce::MidiMessageSequence midi) const;
+
 private:
-    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
 
     PatternList pattern_list;
+
+    /// Normalizes a MIDI sequence:
+    /// - trims any silence at the start
+    /// - shifts all events so the first event starts at timestamp 0
+    static void normalize_midi(juce::MidiMessageSequence& midi);
 };

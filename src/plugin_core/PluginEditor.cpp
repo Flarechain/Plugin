@@ -4,7 +4,6 @@
 #include "BinaryData.h"
 #include "../gui_components/palettes/Palette.h"
 
-//==============================================================================
 FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioProcessor& p)
     : AudioProcessorEditor(&p), processorRef(p),
     instrument_dropdown(90, Instrument::Guitar, "Guitar"),
@@ -38,7 +37,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     {
         if (processorRef.get_pattern_list().get(id).has_empty_midi())
         {
-            // call to MIDI import function
+            open_midi_chooser(id);
         }
         else
         {
@@ -63,7 +62,6 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     setSize(800, 600);
 }
 
-//==============================================================================
 void FlarechainAudioProcessorEditor::paint (juce::Graphics& g)
 {
     const juce::Image backgroundImage = juce::ImageFileFormat::loadFrom(BinaryData::background_png, BinaryData::background_pngSize);
@@ -160,8 +158,8 @@ void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern
 
     modal_dialog->on_primary_action = [this, pattern_id]()
     {
-        // call to import MIDI function
         close_modal();
+        open_midi_chooser(pattern_id);
     };
     modal_dialog->on_secondary_action = [this]()
     {
@@ -220,4 +218,50 @@ void FlarechainAudioProcessorEditor::close_modal()
     }
 
     repaint();
+}
+
+void FlarechainAudioProcessorEditor::open_midi_chooser(const PatternId pattern_id)
+{
+    if (midi_chooser != nullptr) return;
+
+    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    midi_chooser = std::make_unique<juce::FileChooser>(
+        "Select a MIDI file to import into Pattern " + pattern_name + ".",
+        juce::File{},
+        "*.mid;*.midi"
+    );
+
+    midi_chooser->launchAsync(
+        juce::FileBrowserComponent::openMode |
+        juce::FileBrowserComponent::canSelectFiles,
+        [this, pattern_id](const juce::FileChooser& file_chooser)
+        {
+            const auto file = file_chooser.getResult();
+            if (file.existsAsFile())
+            {
+                auto midi = load_midi(file);
+                if (midi.has_value()) { processorRef.set_midi(pattern_id, midi.value()); }
+            }
+
+            midi_chooser.reset();
+        }
+    );
+}
+
+std::optional<juce::MidiMessageSequence> FlarechainAudioProcessorEditor::load_midi(const juce::File& file)
+{
+    juce::FileInputStream stream(file);
+    if (!stream.openedOk()) return std::nullopt;
+
+    juce::MidiFile midi_file;
+    if (!midi_file.readFrom(stream)) return std::nullopt;
+
+    juce::MidiMessageSequence midi;
+    for (int track = 0; track < midi_file.getNumTracks(); ++track)
+    {
+        midi.addSequence(*midi_file.getTrack(track), 0.0);
+    }
+
+    if (midi.getNumEvents() == 0)   return std::nullopt;
+    return midi;
 }

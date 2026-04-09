@@ -28,5 +28,3 @@ private:
     PatternListView pattern_list_view;
     LogPanel log_panel;
 };
-
-// TODO: for each class in this project, check whether it should be public/private..

@@ -14,12 +14,14 @@ public:
 
     [[nodiscard]] PatternId get_id() const { return id; }
     [[nodiscard]] PatternName get_name() const { return name; }
-    [[nodiscard]] juce::MidiMessage get_midi() const { return midi; }
-    [[nodiscard]] bool has_empty_midi() const { return midi.getRawDataSize() > 0; }
+    [[nodiscard]] juce::MidiMessageSequence get_midi() const { return midi; }
+    [[nodiscard]] bool has_empty_midi() const { return midi.getNumEvents() == 0; }
+
+    void set_midi(juce::MidiMessageSequence midi) { this->midi = midi; }
 
 private:
     PatternId id;
     PatternName name;
-    juce::MidiMessage midi;
+    juce::MidiMessageSequence midi;
     Event event;
 };
