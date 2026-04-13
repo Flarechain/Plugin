@@ -58,3 +58,8 @@ void PageView::resized()
             break;
     }
 }
+
+void PageView::refresh() const
+{
+    pattern_list_view.refresh();
+}

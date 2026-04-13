@@ -180,8 +180,9 @@ void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern
 
     modal_dialog->on_primary_action = [this, pattern_id]()
     {
-        // call to pattern delete function
         close_modal();
+        processorRef.delete_pattern(pattern_id);
+        page_view.refresh();
     };
     modal_dialog->on_secondary_action = [this]()
     {
@@ -240,7 +241,11 @@ void FlarechainAudioProcessorEditor::open_midi_chooser(const PatternId pattern_i
             if (file.existsAsFile())
             {
                 auto midi = load_midi(file);
-                if (midi.has_value()) { processorRef.set_midi(pattern_id, midi.value()); }
+                if (midi.has_value())
+                {
+                    processorRef.set_midi(pattern_id, midi.value());
+                    page_view.refresh();
+                }
             }
 
             midi_chooser.reset();

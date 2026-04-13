@@ -25,6 +25,11 @@ void MoreOptions::add_item(const juce::String& item_text, Icon item_icon, const 
     menu.add_item(item_text, std::move(item_icon), on_click);
 }
 
+void MoreOptions::clear()
+{
+    menu.clear();
+}
+
 void MoreOptions::focusLost(FocusChangeType cause)
 {
     juce::ignoreUnused(cause);
@@ -57,5 +62,3 @@ void MoreOptions::close_menu()
     menu.setVisible(false);
     menu.giveAwayKeyboardFocus();
 }
-
-// TODO: don't show delete pattern if pattern has no MIDI to delete

@@ -42,5 +42,8 @@ private:
     /// Adds a new item to the menu with the given text, icon, and action to do when chosen.
     void add_item(const juce::String& text, Icon icon, std::function<void()> on_click);
 
+    /// Clears all items of MoreOptionsMenu, leaving it empty.
+    void clear();
+
     friend class MoreOptions;
 };

@@ -15,7 +15,7 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
 
         pattern_view->on_import = [this, &pattern]()
         {
-            if (on_import) { on_import(pattern->get_id()); }
+            if (on_import)  { on_import(pattern->get_id()); }
         };
         pattern_view->on_delete = [this, &pattern]()
         {
@@ -58,5 +58,18 @@ void PatternListView::resized()
         event_view->setBounds(event_bounds);
 
         y += height + GAP_PATTERNS;
+    }
+}
+
+void PatternListView::refresh() const
+{
+    for (const auto& pattern_view : pattern_views)
+    {
+        pattern_view->refresh();
+    }
+
+    for (const auto& event_view : event_views)
+    {
+        event_view->refresh();
     }
 }

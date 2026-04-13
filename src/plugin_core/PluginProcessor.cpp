@@ -187,3 +187,8 @@ void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
 
     midi.updateMatchedPairs();
 }
+
+void FlarechainAudioProcessor::delete_pattern(const PatternId id) const
+{
+    pattern_list.get(id).clear();
+}

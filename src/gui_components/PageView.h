@@ -16,6 +16,9 @@ public:
 
     void resized() override;
 
+    /// Updates the component state to reflect the current model and triggers a repaint.
+    void refresh() const;
+
     std::function<void(PatternId id)> on_pattern_import;
     std::function<void(PatternId id)> on_pattern_delete;
 

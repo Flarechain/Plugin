@@ -14,8 +14,10 @@ public:
 
     ~EventView() override = default;
 
-    void paint(juce::Graphics& g) override;
     void resized() override;
+
+    /// Updates the component state to reflect the current model and triggers a repaint.
+    void refresh();
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EventView)

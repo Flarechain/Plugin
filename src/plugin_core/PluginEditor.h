@@ -45,7 +45,7 @@ private:
     /// Closes the modal dialog.
     void close_modal();
 
-    /// Opens a native OS file chooser to select a MIDI file for importing into the given pattern.
+    /// Opens a native OS file chooser in async to select a MIDI file for importing into the given pattern.
     void open_midi_chooser(PatternId pattern_id);
 
     /// Tries to convert the content of a file into a MIDI sequence.

@@ -7,6 +7,8 @@
 
 #include "../model/Pattern.h"
 
+typedef std::function<void()> CompletionCallback;
+
 class PatternView : public juce::Component
 {
 public:
@@ -15,8 +17,11 @@ public:
 
     ~PatternView() override = default;
 
-    void paint(juce::Graphics& g) override;
     void resized() override;
+
+    /// Updates the component state to reflect the current model and triggers a repaint.
+    void refresh();
+
     std::function<void()> on_import;
     std::function<void()> on_delete;
 
@@ -30,6 +35,6 @@ private:
     MoreOptions more_options;
     PlaybackControl playback_control;
 
-    void import_midi();
-    void delete_pattern();
+    void import_midi() const;
+    void delete_pattern() const;
 };

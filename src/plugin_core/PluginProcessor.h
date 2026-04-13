@@ -41,6 +41,9 @@ public:
     /// Sets the MIDI sequence for the specified pattern. The given MIDI is normalized before being stored in the pattern.
     void set_midi(PatternId id, juce::MidiMessageSequence midi) const;
 
+    /// Deletes MIDI and event's data for the specified pattern.
+    void delete_pattern(PatternId id) const;
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
 

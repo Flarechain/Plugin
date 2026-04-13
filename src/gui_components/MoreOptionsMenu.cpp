@@ -37,3 +37,10 @@ void MoreOptionsMenu::add_item(const juce::String& text, Icon icon, std::functio
 
     repaint();
 }
+
+void MoreOptionsMenu::clear()
+{
+    items.clear();
+    setSize(0, 0);
+    repaint();
+}

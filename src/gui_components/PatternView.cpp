@@ -14,8 +14,7 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     pattern_label.setMinimumHorizontalScale(1.0f); // disable font stretching
     pattern_label.setInterceptsMouseClicks(false, true);
 
-    more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
-    more_options.add_item("Delete pattern", IconPalette::Trash(12, ColorPalette::Coffee500), [this] { delete_pattern(); });
+    refresh();
 
     addAndMakeVisible(pattern_label);
     addAndMakeVisible(record_button);
@@ -26,24 +25,6 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     const int top_row_height = std::max(pattern_label.getHeight(),
                                         std::max(record_button.getHeight(), more_options.getHeight()));
     setSize(playback_control.getWidth(), top_row_height + gap + playback_control.getHeight());
-}
-
-void PatternView::paint(juce::Graphics& g)
-{
-    juce::ignoreUnused(g);
-
-    if (pattern.has_empty_midi())
-    {
-        pattern_label.setAlpha(0.3f);
-        playback_control.setAlpha(0.3f);
-        playback_control.setEnabled(false);
-    }
-    else
-    {
-        pattern_label.setAlpha(1.0f);
-        playback_control.setAlpha(1.0f);
-        playback_control.setEnabled(true);
-    }
 }
 
 void PatternView::resized()
@@ -80,20 +61,36 @@ void PatternView::resized()
     more_options.setBounds(more_options_button_placement.appliedTo(more_options.getLocalBounds(), buttons_top_bounds));
 }
 
-void PatternView::import_midi()
+void PatternView::refresh()
 {
-    if (on_import)
+    if (pattern.has_empty_midi())
     {
-        on_import();
-        repaint();
+        pattern_label.setAlpha(0.3f);
+        playback_control.setAlpha(0.3f);
+        playback_control.setEnabled(false);
+
+        more_options.clear();
+        more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
     }
+    else
+    {
+        pattern_label.setAlpha(1.0f);
+        playback_control.setAlpha(1.0f);
+        playback_control.setEnabled(true);
+
+        more_options.clear();
+        more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
+        more_options.add_item("Delete pattern", IconPalette::Trash(12, ColorPalette::Coffee500), [this] { delete_pattern(); });
+    }
+    repaint();
 }
 
-void PatternView::delete_pattern()
+void PatternView::import_midi() const
 {
-    if (on_delete)
-    {
-        on_delete();
-        repaint();
-    }
+    if (on_import)  { on_import(); }
+}
+
+void PatternView::delete_pattern() const
+{
+    if (on_delete)  { on_delete(); }
 }

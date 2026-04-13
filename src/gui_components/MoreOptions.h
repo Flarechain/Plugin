@@ -14,8 +14,11 @@ public:
 
     ~MoreOptions() override = default;
 
-    /// Adds a new item to the MoreOptionsMenu, with the given text, icon, and action to do when chosen.
+    /// Adds a new item to MoreOptionsMenu, with the given text, icon, and action to do when chosen.
     void add_item(const juce::String& item_text, Icon item_icon, const std::function<void()>& on_click);
+
+    /// Clears all items of MoreOptionsMenu, leaving it empty.
+    void clear();
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MoreOptions)

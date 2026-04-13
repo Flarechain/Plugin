@@ -120,3 +120,11 @@ void IpAddressField::resized()
     );
     ip_label.setBounds(ip_label_area);
 }
+
+void IpAddressField::clear()
+{
+    block_field_1.clear();
+    block_field_2.clear();
+    block_field_3.clear();
+    block_field_4.clear();
+}
