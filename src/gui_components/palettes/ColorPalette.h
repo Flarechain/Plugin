@@ -5,6 +5,7 @@ class ColorPalette
 {
 public:
     // Coffee
+    static const juce::Colour Coffee300;
     static const juce::Colour Coffee500;
 
     // Red

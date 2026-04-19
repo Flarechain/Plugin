@@ -1,5 +1,6 @@
 #include "EventView.h"
 #include "palettes/Palette.h"
+#include "../core/OscParser.h"
 
 EventView::EventView(const Pattern& pattern) : pattern(pattern)
 {
@@ -13,6 +14,16 @@ EventView::EventView(const Pattern& pattern) : pattern(pattern)
     event_label.setSize(80, static_cast<int>(font.getHeight()));
     event_label.setMinimumHorizontalScale(1.0f); // disable font stretching
     event_label.setInterceptsMouseClicks(false, true);
+
+    ip_address_field.on_change = [this](std::optional<juce::IPAddress> ip)
+    {
+        if (on_ip_change) { on_ip_change(ip); }
+    };
+
+    text_field.on_change = [this](const juce::String& text)
+    {
+        if (on_osc_change) { on_osc_change(OscParser::parse(text)); }
+    };
 
     refresh();
 
@@ -49,9 +60,9 @@ void EventView::refresh()
 {
     if (pattern.has_empty_midi())
     {
-        event_label.setAlpha(0.3f);
-        ip_address_field.setAlpha(0.3f);
-        text_field.setAlpha(0.3f);
+        event_label.setAlpha(0.2f);
+        ip_address_field.setAlpha(0.2f);
+        text_field.setAlpha(0.2f);
         ip_address_field.setEnabled(false);
         text_field.setEnabled(false);
         ip_address_field.setInterceptsMouseClicks(false, false);

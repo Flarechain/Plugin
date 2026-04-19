@@ -1,6 +1,7 @@
 #include "ColorPalette.h"
 
 // Coffee
+const auto ColorPalette::Coffee300 = juce::Colour::fromRGB(35, 5, 15).withAlpha(0.3f);
 const auto ColorPalette::Coffee500 = juce::Colour::fromRGB(35, 5, 15);
 
 // Red

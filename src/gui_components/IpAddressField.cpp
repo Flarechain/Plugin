@@ -16,37 +16,31 @@ IpAddressField::IpAddressField()
     ip_label.setBorderSize(juce::BorderSize(0));
     ip_label.setInterceptsMouseClicks(false, true);
 
-    point_1.setFont(font);
-    point_1.setText(".", juce::dontSendNotification);
-    point_1.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
-    point_1.setSize(4, static_cast<int>(font.getHeight()));
-    point_1.setMinimumHorizontalScale(1.0f);
-    point_1.setBorderSize(juce::BorderSize(0));
+    for (juce::uint8 i = 0; i < point_labels.size(); ++i)
+    {
+        point_labels[i].setFont(font);
+        point_labels[i].setText(".", juce::dontSendNotification);
+        point_labels[i].setColour(juce::Label::textColourId, ColorPalette::Coffee500);
+        point_labels[i].setSize(4, static_cast<int>(font.getHeight()));
+        point_labels[i].setMinimumHorizontalScale(1.0f);
+        point_labels[i].setBorderSize(juce::BorderSize(0));
+    }
 
-    point_2.setFont(font);
-    point_2.setText(".", juce::dontSendNotification);
-    point_2.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
-    point_2.setSize(4, static_cast<int>(font.getHeight()));
-    point_2.setMinimumHorizontalScale(1.0f);
-    point_2.setBorderSize(juce::BorderSize(0));
+    for (juce::uint8 i = 0; i < block_fields.size(); ++i)
+    {
+        block_fields[i].on_change = [this, i](const std::optional<juce::uint8> value)
+        {
+            blocks[i] = value;
+            send_ip_change();
+        };
+        block_fields[i].on_arrow_key = [this, i](const juce::KeyPress& key) { handle_arrow_keys(key, i); };
+    }
 
-    point_3.setFont(font);
-    point_3.setText(".", juce::dontSendNotification);
-    point_3.setColour(juce::Label::textColourId, ColorPalette::Coffee500);
-    point_3.setSize(4, static_cast<int>(font.getHeight()));
-    point_3.setMinimumHorizontalScale(1.0f);
-    point_3.setBorderSize(juce::BorderSize(0));
-
-    setSize(192, block_field_1.getHeight());
+    setSize(192, block_fields[0].getHeight());
 
     addAndMakeVisible(ip_label);
-    addAndMakeVisible(block_field_1);
-    addAndMakeVisible(block_field_2);
-    addAndMakeVisible(block_field_3);
-    addAndMakeVisible(block_field_4);
-    addAndMakeVisible(point_1);
-    addAndMakeVisible(point_2);
-    addAndMakeVisible(point_3);
+    for (auto& block_field : block_fields) { addAndMakeVisible(block_field); }
+    for (auto& point_label : point_labels) { addAndMakeVisible(point_label); }
 }
 
 void IpAddressField::paint(juce::Graphics& g)
@@ -66,44 +60,44 @@ void IpAddressField::resized()
     fb.alignItems = juce::FlexBox::AlignItems::center;
 
     fb.items.add(juce::FlexItem(
-        static_cast<float>(block_field_1.getWidth()),
-        static_cast<float>(block_field_1.getHeight()),
-        block_field_1)
+        static_cast<float>(block_fields[0].getWidth()),
+        static_cast<float>(block_fields[0].getHeight()),
+        block_fields[0])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(point_1.getWidth()),
-        static_cast<float>(point_1.getHeight()),
-        point_1)
+        static_cast<float>(point_labels[0].getWidth()),
+        static_cast<float>(point_labels[0].getHeight()),
+        point_labels[0])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(block_field_2.getWidth()),
-        static_cast<float>(block_field_2.getHeight()),
-        block_field_2)
+        static_cast<float>(block_fields[1].getWidth()),
+        static_cast<float>(block_fields[1].getHeight()),
+        block_fields[1])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(point_2.getWidth()),
-        static_cast<float>(point_2.getHeight()),
-        point_2)
+        static_cast<float>(point_labels[1].getWidth()),
+        static_cast<float>(point_labels[1].getHeight()),
+        point_labels[1])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(block_field_3.getWidth()),
-        static_cast<float>(block_field_3.getHeight()),
-        block_field_3)
+        static_cast<float>(block_fields[2].getWidth()),
+        static_cast<float>(block_fields[2].getHeight()),
+        block_fields[2])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(point_3.getWidth()),
-        static_cast<float>(point_3.getHeight()),
-        point_3)
+        static_cast<float>(point_labels[2].getWidth()),
+        static_cast<float>(point_labels[2].getHeight()),
+        point_labels[2])
     );
     fb.items.add(juce::FlexItem(
-        static_cast<float>(block_field_4.getWidth()),
-        static_cast<float>(block_field_4.getHeight()),
-        block_field_4)
+        static_cast<float>(block_fields[3].getWidth()),
+        static_cast<float>(block_fields[3].getHeight()),
+        block_fields[3])
     );
 
     int gap = 2;
     auto ip_field_area = juce::Rectangle(
-        block_field_1.getWidth() * 4 + gap * 6 + point_1.getWidth() * 3,
+        block_fields[0].getWidth() * 4 + gap * 6 + point_labels[0].getWidth() * 3,
         getHeight()
     );
     const juce::RectanglePlacement ip_field_placement { juce::RectanglePlacement::xRight | juce::RectanglePlacement::yMid | juce::RectanglePlacement::doNotResize };
@@ -123,8 +117,39 @@ void IpAddressField::resized()
 
 void IpAddressField::clear()
 {
-    block_field_1.clear();
-    block_field_2.clear();
-    block_field_3.clear();
-    block_field_4.clear();
+    block_fields[0].clear();
+    block_fields[1].clear();
+    block_fields[2].clear();
+    block_fields[3].clear();
+}
+
+void IpAddressField::send_ip_change() const
+{
+    if (on_change)
+    {
+        std::optional<juce::IPAddress> ip = std::nullopt;
+        if (blocks[0] && blocks[1] && blocks[2] && blocks[3])
+        {
+            ip = juce::IPAddress(blocks[0].value(), blocks[1].value(), blocks[2].value(), blocks[3].value());
+        }
+        on_change(ip);
+    }
+}
+
+void IpAddressField::handle_arrow_keys(const juce::KeyPress& key, const juce::uint8 block_field_index)
+{
+    if (key == juce::KeyPress::rightKey)
+    {
+        if (block_field_index < block_fields.size() - 1)
+        {
+            block_fields[block_field_index + 1].grabKeyboardFocus();
+        }
+    }
+    else if (key == juce::KeyPress::leftKey)
+    {
+        if (block_field_index > 0)
+        {
+            block_fields[block_field_index - 1].grabKeyboardFocus();
+        }
+    }
 }

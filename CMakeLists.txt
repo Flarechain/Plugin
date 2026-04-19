@@ -23,14 +23,23 @@ CPMAddPackage(
         GIT_TAG 8.0.10
 )
 
+CPMAddPackage(
+        NAME catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2
+        GIT_TAG v3.14.0
+)
+
 file(GLOB PluginCoreFiles src/plugin_core/*)
+file(GLOB CoreFiles src/core/*)
 file(GLOB ModelFiles src/model/*)
 file(GLOB_RECURSE GuiComponentsFiles src/gui_components/*)
 list(FILTER GuiComponentsFiles EXCLUDE REGEX ".*\\.DS_Store$")
 set(SourceFiles
         ${ModelFiles}
         ${PluginCoreFiles}
+        ${CoreFiles}
         ${GuiComponentsFiles}
+        ${TestFiles}
 )
 
 juce_add_plugin(${PROJECT_NAME}
@@ -77,6 +86,33 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wno-shadow)
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
+        juce::juce_analytics
+        juce::juce_audio_basics
+        juce::juce_audio_devices
+        juce::juce_core
+        juce::juce_data_structures
+        juce::juce_graphics
+        juce::juce_gui_basics
+        juce::juce_gui_extra
+        juce::juce_audio_utils
+        juce::juce_dsp
+        juce::juce_recommended_config_flags
+        juce::juce_recommended_lto_flags
+        juce::juce_recommended_warning_flags
+        juce::juce_osc
+)
+
+file(GLOB_RECURSE TestFiles src/tests/*)
+list(FILTER TestFiles EXCLUDE REGEX ".*\\.DS_Store$")
+
+add_executable(tests
+        ${TestFiles}
+        ${ModelFiles}
+        ${CoreFiles}
+)
+target_link_libraries(tests
+    PRIVATE
+        Catch2::Catch2WithMain
         juce::juce_analytics
         juce::juce_audio_basics
         juce::juce_audio_devices

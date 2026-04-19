@@ -22,6 +22,15 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
             if (on_delete) { on_delete(pattern->get_id()); }
         };
 
+        event_view->on_ip_change = [this, &pattern](std::optional<juce::IPAddress> ip)
+        {
+            if (on_ip_change) { on_ip_change(pattern->get_id(), std::move(ip)); }
+        };
+        event_view->on_osc_change = [this, &pattern](std::optional<juce::OSCMessage> osc)
+        {
+            if (on_osc_change) { on_osc_change(pattern->get_id(), std::move(osc)); }
+        };
+
         addAndMakeVisible(*pattern_view);
         addAndMakeVisible(*event_view);
         pattern_views.push_back(std::move(pattern_view));

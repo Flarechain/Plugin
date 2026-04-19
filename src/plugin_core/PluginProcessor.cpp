@@ -16,11 +16,6 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
 {
 }
 
-FlarechainAudioProcessor::~FlarechainAudioProcessor()
-{
-
-}
-
 //==============================================================================
 const juce::String FlarechainAudioProcessor::getName() const
 {
@@ -168,6 +163,69 @@ void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSeq
     pattern_list.get(id).set_midi(std::move(midi));
 }
 
+void FlarechainAudioProcessor::set_ip_address(const PatternId id, std::optional<juce::IPAddress> ip) const
+{
+    pattern_list.get(id).get_event().set_ip_address(ip);
+}
+
+void FlarechainAudioProcessor::set_osc_message(const PatternId id, std::optional<juce::OSCMessage> osc) const
+{
+    pattern_list.get(id).get_event().set_osc_message(std::move(osc));
+}
+
+void FlarechainAudioProcessor::delete_pattern(const PatternId id) const
+{
+    pattern_list.get(id).clear();
+}
+
+std::set<PatternId> FlarechainAudioProcessor::get_active_patterns() const
+{
+    std::set<PatternId> set;
+    for (const auto& pattern : pattern_list)
+    {
+        if (!pattern->has_empty_midi()) { set.insert(pattern->get_id()); }
+    }
+    return set;
+}
+
+std::set<PatternId> FlarechainAudioProcessor::get_patterns_with_invalid_ip() const
+{
+    std::set<PatternId> set;
+    for (const auto& pattern : pattern_list)
+    {
+        if (!pattern->has_empty_midi() && !pattern->get_event().get_ip_address()) { set.insert(pattern->get_id()); }
+    }
+    return set;
+}
+
+std::set<PatternId> FlarechainAudioProcessor::get_patterns_with_invalid_osc() const
+{
+    std::set<PatternId> set;
+    for (const auto& pattern : pattern_list)
+    {
+        if (!pattern->has_empty_midi() && !pattern->get_event().get_osc_message()) { set.insert(pattern->get_id()); }
+    }
+    return set;
+}
+
+std::optional<juce::MidiMessageSequence> FlarechainAudioProcessor::load_midi(const juce::File& file)
+{
+    juce::FileInputStream stream(file);
+    if (!stream.openedOk()) return std::nullopt;
+
+    juce::MidiFile midi_file;
+    if (!midi_file.readFrom(stream)) return std::nullopt;
+
+    juce::MidiMessageSequence midi;
+    for (int track = 0; track < midi_file.getNumTracks(); ++track)
+    {
+        midi.addSequence(*midi_file.getTrack(track), 0.0);
+    }
+
+    if (midi.getNumEvents() == 0)   return std::nullopt;
+    return midi;
+}
+
 void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
 {
     if (midi.getNumEvents() == 0)   return;
@@ -186,9 +244,4 @@ void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
     }
 
     midi.updateMatchedPairs();
-}
-
-void FlarechainAudioProcessor::delete_pattern(const PatternId id) const
-{
-    pattern_list.get(id).clear();
 }

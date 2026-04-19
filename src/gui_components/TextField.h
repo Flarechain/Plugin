@@ -11,7 +11,17 @@ public:
     ~TextField() override = default;
 
     void paint(juce::Graphics& g) override;
+    void focusLost(FocusChangeType cause) override;
+
+    /// Called when the text changes and the user has finished editing.
+    ///
+    /// Unlike juce::TextEditor::onTextChange, this callback is triggered only
+    /// after the user completes the interaction with the text field, typically
+    /// when the component loses keyboard focus.
+    std::function<void(juce::String)> on_change;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextField)
+
+    juce::String current_text;
 };

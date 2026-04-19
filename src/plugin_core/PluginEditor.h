@@ -48,10 +48,17 @@ private:
     /// Opens a native OS file chooser in async to select a MIDI file for importing into the given pattern.
     void open_midi_chooser(PatternId pattern_id);
 
-    /// Tries to convert the content of a file into a MIDI sequence.
+    /// Updates the StatusBar message and synchronizes the UI state accordingly.
     ///
-    /// Will return `std::nullopt` if the file has no valid MIDI data.
+    /// This method evaluates the current application state and:
+    /// - Updates the status message shown in the StatusBar
+    /// - Enables or disables UI components based on availability
     ///
-    /// If the MIDI file has data on multiple tracks, all messages will be merged into a single MIDIMessageSequence.
-    static std::optional<juce::MidiMessageSequence> load_midi(const juce::File& file);
+    /// Examples:
+    /// - Disables the "Train Model" button when training is not possible
+    /// - Disables the Live Detection page if the AI model is not downloaded
+    ///
+    /// This function should be called whenever the underlying model or application
+    /// state changes.
+    void update_status();
 };

@@ -19,6 +19,20 @@ public:
     /// Updates the component state to reflect the current model and triggers a repaint.
     void refresh();
 
+    /// Called when the IP address input changes.
+    ///
+    /// @param ip An optional IP address:
+    /// - `std::nullopt` if the input provided by the user is incomplete
+    /// - a valid `juce::IPAddress` if all fields are filled
+    std::function<void(std::optional<juce::IPAddress> ip)> on_ip_change;
+
+    /// Called when the OSC message input changes.
+    ///
+    /// @param osc An optional OSC message:
+    /// - `std::nullopt` if the input provided by the user is not valid or incomplete
+    /// - a `juce::OSCMessage` if the input is a valid OSC message
+    std::function<void(std::optional<juce::OSCMessage> osc)> on_osc_change;
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EventView)
 
@@ -27,4 +41,6 @@ private:
     juce::Label event_label;
     IpAddressField ip_address_field;
     TextField text_field;
+
+    std::optional<juce::OSCMessage> string_to_osc(juce::String string);
 };

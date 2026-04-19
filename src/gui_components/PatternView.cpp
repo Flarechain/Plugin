@@ -65,8 +65,8 @@ void PatternView::refresh()
 {
     if (pattern.has_empty_midi())
     {
-        pattern_label.setAlpha(0.3f);
-        playback_control.setAlpha(0.3f);
+        pattern_label.setAlpha(0.2f);
+        playback_control.setAlpha(0.2f);
         playback_control.setEnabled(false);
 
         more_options.clear();

@@ -37,3 +37,18 @@ void Button::paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButto
     g.setColour(font_color);
     g.drawFittedText(getButtonText(), getLocalBounds(), juce::RectanglePlacement::centred, 1.0f);
 }
+
+void Button::enablementChanged()
+{
+    if (isEnabled())
+    {
+        setAlpha(1.0f);
+        setInterceptsMouseClicks(true, true);
+    }
+    else
+    {
+        setAlpha(0.2f);
+        setInterceptsMouseClicks(false, false);
+    }
+    repaint();
+}

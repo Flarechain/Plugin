@@ -35,7 +35,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
 
     page_view.on_pattern_import = [this](const PatternId id)
     {
-        if (processorRef.get_pattern_list().get(id).has_empty_midi())
+        if (processorRef.get_pattern(id).has_empty_midi())
         {
             open_midi_chooser(id);
         }
@@ -48,9 +48,22 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     {
         show_pattern_delete_modal(id);
     };
+    page_view.on_ip_change = [this](const PatternId pattern_id, std::optional<juce::IPAddress> ip)
+    {
+        processorRef.set_ip_address(pattern_id, ip);
+        update_status();
+    };
+    page_view.on_osc_change = [this](const PatternId pattern_id, std::optional<juce::OSCMessage> osc)
+    {
+        processorRef.set_osc_message(pattern_id, std::move(osc));
+        update_status();
+    };
+
+    update_status();
 
     overlay_background.setFill(juce::FillType(juce::Colours::black.withAlpha(0.25f)));
     addChildComponent(overlay_background);
+
 
     addAndMakeVisible(preset_label);
     addAndMakeVisible(preset_dropdown);
@@ -149,7 +162,7 @@ void FlarechainAudioProcessorEditor::resized()
 
 void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern_id)
 {
-    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    const auto pattern_name = processorRef.get_pattern(pattern_id).get_name();
     modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to import MIDI into Pattern " + pattern_name + "?",
         "This will overwrite the existing pattern and cannot be undone.",
         "Import MIDI",
@@ -171,7 +184,7 @@ void FlarechainAudioProcessorEditor::show_pattern_import_modal(PatternId pattern
 
 void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern_id)
 {
-    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    const auto pattern_name = processorRef.get_pattern(pattern_id).get_name();
     modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to delete Pattern " + pattern_name + "?",
         "This cannot be undone.",
         "Delete pattern",
@@ -183,6 +196,7 @@ void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern
         close_modal();
         processorRef.delete_pattern(pattern_id);
         page_view.refresh();
+        update_status();
     };
     modal_dialog->on_secondary_action = [this]()
     {
@@ -225,7 +239,7 @@ void FlarechainAudioProcessorEditor::open_midi_chooser(const PatternId pattern_i
 {
     if (midi_chooser != nullptr) return;
 
-    const auto pattern_name = processorRef.get_pattern_list().get(pattern_id).get_name();
+    const auto pattern_name = processorRef.get_pattern(pattern_id).get_name();
     midi_chooser = std::make_unique<juce::FileChooser>(
         "Select a MIDI file to import into Pattern " + pattern_name + ".",
         juce::File{},
@@ -240,11 +254,12 @@ void FlarechainAudioProcessorEditor::open_midi_chooser(const PatternId pattern_i
             const auto file = file_chooser.getResult();
             if (file.existsAsFile())
             {
-                auto midi = load_midi(file);
+                auto midi = FlarechainAudioProcessor::load_midi(file);
                 if (midi.has_value())
                 {
                     processorRef.set_midi(pattern_id, midi.value());
                     page_view.refresh();
+                    update_status();
                 }
             }
 
@@ -253,20 +268,57 @@ void FlarechainAudioProcessorEditor::open_midi_chooser(const PatternId pattern_i
     );
 }
 
-std::optional<juce::MidiMessageSequence> FlarechainAudioProcessorEditor::load_midi(const juce::File& file)
+void FlarechainAudioProcessorEditor::update_status()
 {
-    juce::FileInputStream stream(file);
-    if (!stream.openedOk()) return std::nullopt;
-
-    juce::MidiFile midi_file;
-    if (!midi_file.readFrom(stream)) return std::nullopt;
-
-    juce::MidiMessageSequence midi;
-    for (int track = 0; track < midi_file.getNumTracks(); ++track)
+    if (processorRef.get_active_patterns().empty())
     {
-        midi.addSequence(*midi_file.getTrack(track), 0.0);
+        status_bar.set_status(Warning, "No pattern has been set up");
+        train_button.setEnabled(false);
+        return;
+    }
+    if (processorRef.is_model_downloaded())
+    {
+        status_bar.set_status(Ok, "Model ready");
+        train_button.setEnabled(false);
+        return;
     }
 
-    if (midi.getNumEvents() == 0)   return std::nullopt;
-    return midi;
+    train_button.setEnabled(true);
+
+    const auto patterns_with_invalid_ip = processorRef.get_patterns_with_invalid_ip();
+    const auto patterns_with_invalid_osc = processorRef.get_patterns_with_invalid_osc();
+
+    if (patterns_with_invalid_ip.empty() && patterns_with_invalid_osc.empty())
+    {
+        status_bar.set_status(Warning, "Model not trained");
+        return;
+    }
+
+    juce::String status_message;
+    if (!patterns_with_invalid_ip.empty() && patterns_with_invalid_osc.empty())
+    {
+        status_message = "Invalid IP for ";
+    }
+    else if (patterns_with_invalid_ip.empty() && !patterns_with_invalid_osc.empty())
+    {
+        status_message = "Invalid OSC for ";
+    }
+    else if (!patterns_with_invalid_ip.empty() && !patterns_with_invalid_osc.empty())
+    {
+        status_message = "Invalid IP/OSC for ";
+    }
+
+    std::set<PatternId> patterns_with_invalid_ip_or_osc;
+    patterns_with_invalid_ip_or_osc.insert(patterns_with_invalid_ip.begin(), patterns_with_invalid_ip.end());
+    patterns_with_invalid_ip_or_osc.insert(patterns_with_invalid_osc.begin(), patterns_with_invalid_osc.end());
+
+    juce::uint32 i = 1;
+    for (const auto pattern_id : patterns_with_invalid_ip_or_osc)
+    {
+        if (i > 1) status_message << ", ";
+        status_message << processorRef.get_pattern(pattern_id).get_name();
+        i++;
+    }
+
+    status_bar.set_status(Warning, status_message);
 }
