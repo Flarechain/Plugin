@@ -1,9 +1,12 @@
 #include "PluginProcessor.h"
+#include "PluginProcessor.h"
+
+#include <objc/objc.h>
+
 #include "PluginEditor.h"
 
 constexpr juce::uint8 NUM_PATTERNS = 5;
 
-//==============================================================================
 FlarechainAudioProcessor::FlarechainAudioProcessor()
     : AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -14,9 +17,18 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
 #endif
       ), pattern_list(NUM_PATTERNS)
 {
+    playback.on_play = [this](PatternId id)
+    {
+        async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStart, id });
+        triggerAsyncUpdate();
+    };
+    playback.on_stop = [this](PatternId id)
+    {
+        async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStop, id });
+        triggerAsyncUpdate();
+    };
 }
 
-//==============================================================================
 const juce::String FlarechainAudioProcessor::getName() const
 {
     return JucePlugin_Name;
@@ -81,10 +93,9 @@ void FlarechainAudioProcessor::changeProgramName (int index, const juce::String&
     juce::ignoreUnused (index, newName);
 }
 
-//==============================================================================
-void FlarechainAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void FlarechainAudioProcessor::prepareToPlay (const double sampleRate, const int samplesPerBlock)
 {
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    playback.set_sample_rate(sampleRate);
 }
 
 void FlarechainAudioProcessor::releaseResources()
@@ -111,19 +122,20 @@ bool FlarechainAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
   #endif
 }
 
-void FlarechainAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
-                                              juce::MidiBuffer& midiMessages)
+void FlarechainAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(buffer);
-
-    for (auto metadata : midiMessages)
+    if (playback.is_playing())
     {
-        auto message = metadata.getMessage();
-        std::cout << message.getDescription();
+        midiMessages = playback.get_next_buffer(buffer.getNumSamples());
+        for (auto message  : midiMessages) { DBG(message.getMessage().getDescription()); }
     }
+    // else if (is_recording)
+    // {
+    //
+    // }
+    // TODO: recording
 }
 
-//==============================================================================
 bool FlarechainAudioProcessor::hasEditor() const
 {
     return true;
@@ -134,7 +146,6 @@ juce::AudioProcessorEditor* FlarechainAudioProcessor::createEditor()
     return new FlarechainAudioProcessorEditor (*this);
 }
 
-//==============================================================================
 void FlarechainAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
@@ -150,17 +161,37 @@ void FlarechainAudioProcessor::setStateInformation (const void* data, int sizeIn
     juce::ignoreUnused (data, sizeInBytes);
 }
 
-//==============================================================================
 // This creates new instances of the plugin.
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new FlarechainAudioProcessor();
 }
 
-void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSequence midi) const
+void FlarechainAudioProcessor::handleAsyncUpdate()
 {
+    AsyncEvent event;
+    while (async_event_queue.pop(event))
+    {
+        if (event.type == AsyncEvent::Type::PlaybackStart)
+        {
+            if (on_playback_start) { on_playback_start(event.pattern_id); }
+        }
+        else if (event.type == AsyncEvent::Type::PlaybackStop)
+        {
+            if (on_playback_stop) { on_playback_stop(event.pattern_id); }
+        }
+    }
+}
+
+void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSequence midi)
+{
+    if (playback.is_playing() && playback.get_playing_pattern() == id)
+    {
+        stop_playing();
+    }
+
     normalize_midi(midi);
-    pattern_list.get(id).set_midi(std::move(midi));
+    if (midi.getNumEvents() != 0) { pattern_list.get(id).set_midi(std::move(midi)); }
 }
 
 void FlarechainAudioProcessor::set_ip_address(const PatternId id, std::optional<juce::IPAddress> ip) const
@@ -173,9 +204,23 @@ void FlarechainAudioProcessor::set_osc_message(const PatternId id, std::optional
     pattern_list.get(id).get_event().set_osc_message(std::move(osc));
 }
 
-void FlarechainAudioProcessor::delete_pattern(const PatternId id) const
+void FlarechainAudioProcessor::delete_pattern(const PatternId id)
 {
+    if (playback.is_playing() && playback.get_playing_pattern() == id)
+    {
+        stop_playing();
+    }
     pattern_list.get(id).clear();
+}
+
+void FlarechainAudioProcessor::play_pattern(const PatternId id)
+{
+    playback.play(id, pattern_list.get(id).get_midi());
+}
+
+void FlarechainAudioProcessor::stop_playing()
+{
+    playback.stop();
 }
 
 std::set<PatternId> FlarechainAudioProcessor::get_active_patterns() const
@@ -215,6 +260,7 @@ std::optional<juce::MidiMessageSequence> FlarechainAudioProcessor::load_midi(con
 
     juce::MidiFile midi_file;
     if (!midi_file.readFrom(stream)) return std::nullopt;
+    midi_file.convertTimestampTicksToSeconds();
 
     juce::MidiMessageSequence midi;
     for (int track = 0; track < midi_file.getNumTracks(); ++track)
@@ -228,20 +274,36 @@ std::optional<juce::MidiMessageSequence> FlarechainAudioProcessor::load_midi(con
 
 void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
 {
-    if (midi.getNumEvents() == 0)   return;
+    if (midi.getNumEvents() == 0) return;
 
     midi.sort();
     midi.updateMatchedPairs();
 
-    const double offset = midi.getEventPointer(0)->message.getTimeStamp();
+    juce::MidiMessageSequence normalized_midi;
+
+    double offset = 0;
+    bool first = true;
 
     for (int i = 0; i < midi.getNumEvents(); ++i)
     {
-        auto* event = midi.getEventPointer(i);
-        event->message.setTimeStamp(
-            event->message.getTimeStamp() - offset
-        );
+        const auto* event = midi.getEventPointer(i);
+        if (event->message.isNoteOn(false) || event->message.isNoteOff(false) ||
+            event->message.isPitchWheel() || event->message.isAftertouch() || event->message.isControllerOfType(1) ||
+            event->message.isSustainPedalOn() || event->message.isSustainPedalOff() ||
+            event->message.isSostenutoPedalOn() || event->message.isSostenutoPedalOff() ||
+            event->message.isSoftPedalOn() || event->message.isSoftPedalOff())
+        {
+            if (first)
+            {
+                offset = event->message.getTimeStamp();
+                first = false;
+            }
+
+            if (event->message.getTimeStamp() - offset > MAX_MIDI_DURATION_SECONDS) { break; }
+            normalized_midi.addEvent(event->message, -offset);
+        }
     }
 
-    midi.updateMatchedPairs();
+    normalized_midi.updateMatchedPairs();
+    midi = normalized_midi;
 }

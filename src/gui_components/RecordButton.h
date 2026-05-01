@@ -19,6 +19,9 @@ public:
     /// Changes the state of RecordButton, setting `is_recording` to false.
     void stop();
 
+    std::function<void()> on_record;
+    std::function<void()> on_stop;
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RecordButton)
 

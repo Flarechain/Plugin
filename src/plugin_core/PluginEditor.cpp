@@ -33,7 +33,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
         resized();
     };
 
-    page_view.on_pattern_import = [this](const PatternId id)
+    page_view.get_pattern_list_view().on_import = [this](const PatternId id)
     {
         if (processorRef.get_pattern(id).has_empty_midi())
         {
@@ -44,26 +44,42 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
             show_pattern_import_modal(id);
         }
     };
-    page_view.on_pattern_delete = [this](const PatternId id)
+    page_view.get_pattern_list_view().on_delete = [this](const PatternId id)
     {
         show_pattern_delete_modal(id);
     };
-    page_view.on_ip_change = [this](const PatternId pattern_id, std::optional<juce::IPAddress> ip)
+    page_view.get_pattern_list_view().on_play = [this](const PatternId id)
+    {
+        processorRef.play_pattern(id);
+    };
+    page_view.get_pattern_list_view().on_stop_playing = [this](const PatternId id)
+    {
+        processorRef.stop_playing();
+    };
+    page_view.get_pattern_list_view().on_ip_change = [this](const PatternId pattern_id, std::optional<juce::IPAddress> ip)
     {
         processorRef.set_ip_address(pattern_id, ip);
         update_status();
     };
-    page_view.on_osc_change = [this](const PatternId pattern_id, std::optional<juce::OSCMessage> osc)
+    page_view.get_pattern_list_view().on_osc_change = [this](const PatternId pattern_id, std::optional<juce::OSCMessage> osc)
     {
         processorRef.set_osc_message(pattern_id, std::move(osc));
         update_status();
+    };
+
+    processorRef.on_playback_start = [this](PatternId pattern_id)
+    {
+        page_view.get_pattern_list_view().play(pattern_id);
+    };
+    processorRef.on_playback_stop = [this](PatternId pattern_id)
+    {
+        page_view.get_pattern_list_view().stop_playing(pattern_id);
     };
 
     update_status();
 
     overlay_background.setFill(juce::FillType(juce::Colours::black.withAlpha(0.25f)));
     addChildComponent(overlay_background);
-
 
     addAndMakeVisible(preset_label);
     addAndMakeVisible(preset_dropdown);

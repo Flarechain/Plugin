@@ -4,6 +4,19 @@
 PlaybackControl::PlaybackControl() : playback_bar(playback_progress), playback_progress(0.0)
 {
     setInterceptsMouseClicks(false, true);
+    is_playing = false;
+
+    play_button.onClick = [this]()
+    {
+        if (is_playing)
+        {
+            if (on_stop) { on_stop(); }
+        }
+        else
+        {
+            if (on_play) { on_play(); }
+        }
+    };
 
     addAndMakeVisible(play_button);
     addAndMakeVisible(playback_bar);
@@ -29,4 +42,18 @@ void PlaybackControl::resized()
     );
 
     fb.performLayout(getLocalBounds().toFloat());
+}
+
+void PlaybackControl::play()
+{
+    is_playing = true;
+    play_button.play();
+    playback_bar.play();
+}
+
+void PlaybackControl::stop()
+{
+    is_playing = false;
+    play_button.stop();
+    playback_bar.stop();
 }

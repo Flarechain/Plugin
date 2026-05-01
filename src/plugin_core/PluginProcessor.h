@@ -1,9 +1,12 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+
+#include "../core/MidiPlayback.h"
+#include "../core/RealtimeBuffer.h"
 #include "../model/PatternList.h"
 
-class FlarechainAudioProcessor final : public juce::AudioProcessor
+class FlarechainAudioProcessor final : public juce::AudioProcessor, juce::AsyncUpdater
 {
 public:
     FlarechainAudioProcessor();
@@ -36,6 +39,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void handleAsyncUpdate() override;
+
     const PatternList& get_pattern_list() const { return pattern_list; }
     const Pattern& get_pattern(const PatternId id) const { return pattern_list.get(id); }
 
@@ -53,7 +58,7 @@ public:
     bool is_model_downloaded() const { return false; }
 
     /// Sets the MIDI sequence for the specified pattern. The given MIDI is normalized before being stored in the pattern.
-    void set_midi(PatternId id, juce::MidiMessageSequence midi) const;
+    void set_midi(PatternId id, juce::MidiMessageSequence midi);
 
     /// Sets the given IP address to the specified pattern.
     void set_ip_address(PatternId id, std::optional<juce::IPAddress> ip) const;
@@ -62,22 +67,57 @@ public:
     void set_osc_message(PatternId id, std::optional<juce::OSCMessage> osc) const;
 
     /// Deletes MIDI and event's data for the specified pattern.
-    void delete_pattern(PatternId id) const;
+    void delete_pattern(PatternId id);
+
+    /// Plays the specified pattern, sending its MIDI data in output.
+    void play_pattern(PatternId id);
+
+    /// Stops the playback of the current pattern.
+    void stop_playing();
 
     /// Tries to convert the content of a file into a MIDI sequence.
     ///
     /// Will return `std::nullopt` if the file has no valid MIDI data.
     ///
     /// If the MIDI file has data on multiple tracks, all messages will be merged into a single MIDIMessageSequence.
+    ///
+    /// The timestamps will be converted into seconds instead of ticks.
     static std::optional<juce::MidiMessageSequence> load_midi(const juce::File& file);
+
+    std::function<void(PatternId id)> on_playback_start;
+    std::function<void(PatternId id)> on_playback_stop;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
 
+    struct AsyncEvent
+    {
+        enum class Type : int
+        {
+            None,
+            PlaybackStart,
+            PlaybackStop,
+            RecordingStart,
+            RecordingStop
+        };
+
+        Type type;
+        PatternId pattern_id;
+    };
+
     PatternList pattern_list;
+    MidiPlayback playback;
+
+    RealtimeBuffer<AsyncEvent, 16> async_event_queue;
+
+    // maximum midi duration for every pattern
+    static constexpr juce::uint8 MAX_MIDI_DURATION_SECONDS = 10;
 
     /// Normalizes a MIDI sequence:
-    /// - trims any silence at the start
-    /// - shifts all events so the first event starts at timestamp 0
+    /// - filters MIDI events, keeping only Note On/Off, Pitch Wheel, Aftertouch, Modulation Wheel,
+    ///   Sustain Pedal On/Off, Sostenuto Pedal On/Off, Soft Pedal On/Off
+    /// - sorts MIDI events in ascending order
+    /// - trims any silence at the start, shifting all events so the first event starts at timestamp 0
+    /// - trims the MIDI sequence so that no event exceeds `MAX_MIDI_DURATION_SECONDS`
     static void normalize_midi(juce::MidiMessageSequence& midi);
 };

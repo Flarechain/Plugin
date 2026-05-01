@@ -5,6 +5,13 @@ RecordButton::RecordButton() : Button("RECORD")
 {
     is_recording = false;
     icon = IconPalette::Record(6, ColorPalette::Coffee500);
+
+    onClick = [this]()
+    {
+        if (is_recording) { stop(); }
+        else { record(); }
+    };
+
     setSize(86, 24);
 }
 
@@ -49,6 +56,8 @@ void RecordButton::record()
     is_recording = true;
     icon = IconPalette::Stop(6, ColorPalette::Coffee500);
     setButtonText("STOP");
+
+    if (on_record) { on_record(); }
 }
 
 void RecordButton::stop()
@@ -56,4 +65,6 @@ void RecordButton::stop()
     is_recording = false;
     icon = IconPalette::Record(6, ColorPalette::Coffee500);
     setButtonText("RECORD");
+
+    if (on_stop) { on_stop(); }
 }

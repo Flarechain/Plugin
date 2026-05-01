@@ -3,7 +3,6 @@
 
 PlaybackControl::PlaybackBar::PlaybackBar(double &progress) : juce::ProgressBar(progress)
 {
-    is_playing = false;
     setSize(250, 12);
 }
 
@@ -43,5 +42,10 @@ void PlaybackControl::PlaybackBar::paint(juce::Graphics& g)
 
 void PlaybackControl::PlaybackBar::play()
 {
-    is_playing = true;
+
+}
+
+void PlaybackControl::PlaybackBar::stop()
+{
+
 }

@@ -21,6 +21,14 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
         {
             if (on_delete) { on_delete(pattern->get_id()); }
         };
+        pattern_view->on_play = [this, &pattern]()
+        {
+            if (on_play) { on_play(pattern->get_id()); }
+        };
+        pattern_view->on_stop_playing = [this, &pattern]()
+        {
+            if (on_stop_playing) { on_stop_playing(pattern->get_id()); }
+        };
 
         event_view->on_ip_change = [this, &pattern](std::optional<juce::IPAddress> ip)
         {

@@ -14,6 +14,15 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     pattern_label.setMinimumHorizontalScale(1.0f); // disable font stretching
     pattern_label.setInterceptsMouseClicks(false, true);
 
+    playback_control.on_play = [this]()
+    {
+        if (on_play) { on_play(); }
+    };
+    playback_control.on_stop = [this]()
+    {
+        if (on_stop_playing) { on_stop_playing(); }
+    };
+
     refresh();
 
     addAndMakeVisible(pattern_label);

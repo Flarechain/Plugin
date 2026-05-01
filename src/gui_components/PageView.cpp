@@ -14,23 +14,6 @@ PageView::PageView(const PatternList& pattern_list) :
         resized();
     };
 
-    pattern_list_view.on_import = [this](const PatternId id)
-    {
-        if (on_pattern_import) { on_pattern_import(id); }
-    };
-    pattern_list_view.on_delete = [this](const PatternId id)
-    {
-        if (on_pattern_delete) { on_pattern_delete(id); }
-    };
-    pattern_list_view.on_ip_change = [this](const PatternId id, std::optional<juce::IPAddress> ip)
-    {
-        if (on_ip_change) { on_ip_change(id, std::move(ip)); }
-    };
-    pattern_list_view.on_osc_change = [this](const PatternId id, std::optional<juce::OSCMessage> osc)
-    {
-        if (on_osc_change) { on_osc_change(id, std::move(osc)); }
-    };
-
     addAndMakeVisible(tab_bar);
     addAndMakeVisible(pattern_list_view);
     addAndMakeVisible(log_panel);

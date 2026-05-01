@@ -22,8 +22,32 @@ public:
     /// Updates the component state to reflect the current model and triggers a repaint.
     void refresh();
 
+    /// Updates the playback state and visual representation of PlaybackControl.
+    ///
+    /// This method should be called when the processor has confirmed that playback has actually started
+    /// (not when the user clicks Play).
+    void play() { playback_control.play(); }
+
+    /// Updates the playback state and visual representation of PlaybackControl.
+    ///
+    /// This method should be called when the processor has confirmed that playback has actually stopped
+    /// (not when the user clicks Stop).
+    void stop_playing() { playback_control.stop(); }
+
     std::function<void()> on_import;
     std::function<void()> on_delete;
+
+    /// Called when the user requests to start playback of this pattern.
+    ///
+    /// This does NOT immediately change the visual or internal playback state.
+    /// Instead, it should only notify the processor that the user intends to start playback.
+    std::function<void()> on_play;
+
+    /// Called when the user requests to stop playback of this pattern.
+    ///
+    /// This does NOT immediately change the visual or internal playback state.
+    /// Instead, it should only notify the processor that the user intends to stop playback.
+    std::function<void()> on_stop_playing;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternView)

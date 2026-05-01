@@ -18,8 +18,32 @@ public:
     /// Updates the component state to reflect the current model and triggers a repaint.
     void refresh() const;
 
+    /// Updates the playback state and visual representation of PlaybackControl of the specified pattern.
+    ///
+    /// This method should be called when the processor has confirmed that playback has actually started
+    /// (not when the user clicks Play).
+    void play(const PatternId id) const { pattern_views[id]->play(); }
+
+    /// Updates the playback state and visual representation of PlaybackControl of the specified pattern.
+    ///
+    /// This method should be called when the processor has confirmed that playback has actually stopped
+    /// (not when the user clicks Stop).
+    void stop_playing(const PatternId id) const { pattern_views[id]->stop_playing(); }
+
     std::function<void(PatternId id)> on_import;
     std::function<void(PatternId id)> on_delete;
+
+    /// Called when the user requests to start playback of a specific pattern.
+    ///
+    /// This does NOT immediately change the visual or internal playback state.
+    /// Instead, it should only notify the processor that the user intends to start playback.
+    std::function<void(PatternId id)> on_play;
+
+    /// Called when the user requests to stop playback of a specific pattern.
+    ///
+    /// This does NOT immediately change the visual or internal playback state.
+    /// Instead, it should only notify the processor that the user intends to stop playback.
+    std::function<void(PatternId id)> on_stop_playing;
 
     /// Called when a pattern's IP address input changes.
     ///
