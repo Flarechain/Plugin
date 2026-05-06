@@ -8,8 +8,8 @@ RecordButton::RecordButton() : Button("RECORD")
 
     onClick = [this]()
     {
-        if (is_recording) { stop(); }
-        else { record(); }
+        if (is_recording) { if (on_stop) { on_stop(); } }
+        else { if (on_record) { on_record(); } }
     };
 
     setSize(86, 24);
@@ -51,13 +51,26 @@ void RecordButton::paintButton(juce::Graphics& g, const bool isMouseOverButton, 
     );
 }
 
+void RecordButton::enablementChanged()
+{
+    if (isEnabled())
+    {
+        setAlpha(1.0f);
+        setInterceptsMouseClicks(true, true);
+    }
+    else
+    {
+        setAlpha(0.2f);
+        setInterceptsMouseClicks(false, false);
+    }
+    repaint();
+}
+
 void RecordButton::record()
 {
     is_recording = true;
     icon = IconPalette::Stop(6, ColorPalette::Coffee500);
     setButtonText("STOP");
-
-    if (on_record) { on_record(); }
 }
 
 void RecordButton::stop()
@@ -65,6 +78,4 @@ void RecordButton::stop()
     is_recording = false;
     icon = IconPalette::Record(6, ColorPalette::Coffee500);
     setButtonText("RECORD");
-
-    if (on_stop) { on_stop(); }
 }

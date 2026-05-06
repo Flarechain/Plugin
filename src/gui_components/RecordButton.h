@@ -12,14 +12,30 @@ public:
     ~RecordButton() override = default;
 
     void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+    void enablementChanged() override;
 
-    /// Changes the state of RecordButton, setting `is_recording` to true.
+    /// Updates the internal recording state and visual representation of this button.
+    ///
+    /// This method should be called when the processor has confirmed that recording has actually started
+    /// (not when the user clicks Record).
     void record();
 
-    /// Changes the state of RecordButton, setting `is_recording` to false.
+    /// Updates the internal recording state and visual representation of this button.
+    ///
+    /// This method should be called when the processor has confirmed that recording has actually stopped
+    /// (not when the user clicks Stop).
     void stop();
 
+    /// Called when the user requests to record this pattern.
+    ///
+    /// This does NOT immediately change the visual or internal recording state.
+    /// Instead, it should only notify the processor that the user intends to start recording.
     std::function<void()> on_record;
+
+    /// Called when the user requests to stop recording this pattern.
+    ///
+    /// This does NOT immediately change the visual or internal recording state.
+    /// Instead, it should only notify the processor that the user intends to stop recording.
     std::function<void()> on_stop;
 
 private:

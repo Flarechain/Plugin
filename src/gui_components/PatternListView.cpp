@@ -29,6 +29,14 @@ PatternListView::PatternListView(const PatternList& pattern_list) : pattern_list
         {
             if (on_stop_playing) { on_stop_playing(pattern->get_id()); }
         };
+        pattern_view->on_record = [this, &pattern]()
+        {
+            if (on_record) { on_record(pattern->get_id()); }
+        };
+        pattern_view->on_stop_recording = [this, &pattern]()
+        {
+            if (on_stop_recording) { on_stop_recording(pattern->get_id()); }
+        };
 
         event_view->on_ip_change = [this, &pattern](std::optional<juce::IPAddress> ip)
         {
@@ -88,5 +96,29 @@ void PatternListView::refresh() const
     for (const auto& event_view : event_views)
     {
         event_view->refresh();
+    }
+}
+
+void PatternListView::record(const PatternId id) const
+{
+    pattern_views[id]->record();
+    for (auto& pattern_view : pattern_views)
+    {
+        if (pattern_view->get_pattern_id() != id)
+        {
+            pattern_view->set_controls_enabled(false);
+        }
+    }
+}
+
+void PatternListView::stop_recording(const PatternId id) const
+{
+    pattern_views[id]->stop_recording();
+    for (auto& pattern_view : pattern_views)
+    {
+        if (pattern_view->get_pattern_id() != id)
+        {
+            pattern_view->set_controls_enabled(true);
+        }
     }
 }

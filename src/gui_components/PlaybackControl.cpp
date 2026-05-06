@@ -44,6 +44,12 @@ void PlaybackControl::resized()
     fb.performLayout(getLocalBounds().toFloat());
 }
 
+void PlaybackControl::set_play_button_enabled(const bool enabled)
+{
+    if (enabled) { play_button.setEnabled(true); }
+    else { play_button.setEnabled(false); }
+}
+
 void PlaybackControl::play()
 {
     is_playing = true;

@@ -56,6 +56,21 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
     {
         processorRef.stop_playing();
     };
+    page_view.get_pattern_list_view().on_record = [this](const PatternId id)
+    {
+        if (processorRef.get_pattern(id).has_empty_midi())
+        {
+            processorRef.record_pattern(id);
+        }
+        else
+        {
+            show_pattern_record_modal(id);
+        }
+    };
+    page_view.get_pattern_list_view().on_stop_recording = [this](const PatternId id)
+    {
+        processorRef.stop_recording();
+    };
     page_view.get_pattern_list_view().on_ip_change = [this](const PatternId pattern_id, std::optional<juce::IPAddress> ip)
     {
         processorRef.set_ip_address(pattern_id, ip);
@@ -67,18 +82,29 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
         update_status();
     };
 
-    processorRef.on_playback_start = [this](PatternId pattern_id)
+    processorRef.on_playback_start = [this](const PatternId pattern_id)
     {
         page_view.get_pattern_list_view().play(pattern_id);
     };
-    processorRef.on_playback_stop = [this](PatternId pattern_id)
+    processorRef.on_playback_stop = [this](const PatternId pattern_id)
     {
         page_view.get_pattern_list_view().stop_playing(pattern_id);
+    };
+    processorRef.on_recording_start = [this](const PatternId pattern_id)
+    {
+        page_view.get_pattern_list_view().record(pattern_id);
+    };
+    processorRef.on_recording_stop = [this](const PatternId pattern_id)
+    {
+        page_view.get_pattern_list_view().stop_recording(pattern_id);
+        page_view.refresh();
+        update_status();
     };
 
     update_status();
 
     overlay_background.setFill(juce::FillType(juce::Colours::black.withAlpha(0.25f)));
+    overlay_background.setInterceptsMouseClicks(false, false);
     addChildComponent(overlay_background);
 
     addAndMakeVisible(preset_label);
@@ -222,6 +248,28 @@ void FlarechainAudioProcessorEditor::show_pattern_delete_modal(PatternId pattern
     show_modal();
 }
 
+void FlarechainAudioProcessorEditor::show_pattern_record_modal(PatternId pattern_id)
+{
+    const auto pattern_name = processorRef.get_pattern(pattern_id).get_name();
+    modal_dialog = std::make_unique<ModalDialog>("Are you sure you want to record Pattern " + pattern_name + "?",
+        "This will overwrite the existing pattern and cannot be undone.",
+        "Record pattern",
+        "Cancel"
+    );
+
+    modal_dialog->on_primary_action = [this, pattern_id]()
+    {
+        close_modal();
+        processorRef.record_pattern(pattern_id);
+    };
+    modal_dialog->on_secondary_action = [this]()
+    {
+        close_modal();
+    };
+
+    show_modal();
+}
+
 void FlarechainAudioProcessorEditor::show_modal()
 {
     if (modal_dialog == nullptr) return;
@@ -243,6 +291,7 @@ void FlarechainAudioProcessorEditor::close_modal()
     if (modal_dialog != nullptr)
     {
         overlay_background.setVisible(false);
+        overlay_background.setInterceptsMouseClicks(false, false);
         modal_dialog->exitModalState(0);
         removeChildComponent(modal_dialog.get());
         modal_dialog.reset();

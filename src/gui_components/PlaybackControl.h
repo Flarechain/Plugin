@@ -13,6 +13,12 @@ public:
 
     void resized() override;
 
+    /// Enables or disables the play button.
+    ///
+    /// This is different from `setEnabled()`, which enables/disables the whole component,
+    /// including the PlaybackBar.
+    void set_play_button_enabled(bool enabled);
+
     /// Updates the internal playback state and visual representation of this control.
     ///
     /// This method should be called when the processor has confirmed that playback has actually started
@@ -70,6 +76,7 @@ private:
         ~PlaybackBar() override = default;
 
         void paint(juce::Graphics& g) override;
+        void enablementChanged() override;
 
         void play();
         void stop();

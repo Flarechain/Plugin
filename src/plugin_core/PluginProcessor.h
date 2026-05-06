@@ -3,7 +3,9 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 #include "../core/MidiPlayback.h"
+#include "../core/MidiRecording.h"
 #include "../core/RealtimeBuffer.h"
+#include "../core/MidiNormalizer.h"
 #include "../model/PatternList.h"
 
 class FlarechainAudioProcessor final : public juce::AudioProcessor, juce::AsyncUpdater
@@ -75,6 +77,12 @@ public:
     /// Stops the playback of the current pattern.
     void stop_playing();
 
+    /// Records the specified pattern.
+    void record_pattern(PatternId id);
+
+    /// Stops the recording of the current pattern, updating its MIDI sequence with the recorded one.
+    void stop_recording();
+
     /// Tries to convert the content of a file into a MIDI sequence.
     ///
     /// Will return `std::nullopt` if the file has no valid MIDI data.
@@ -86,6 +94,8 @@ public:
 
     std::function<void(PatternId id)> on_playback_start;
     std::function<void(PatternId id)> on_playback_stop;
+    std::function<void(PatternId id)> on_recording_start;
+    std::function<void(PatternId id)> on_recording_stop;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
@@ -107,17 +117,11 @@ private:
 
     PatternList pattern_list;
     MidiPlayback playback;
+    MidiRecording recording;
+    MidiNormalizer midi_normalizer;
 
     RealtimeBuffer<AsyncEvent, 16> async_event_queue;
 
     // maximum midi duration for every pattern
     static constexpr juce::uint8 MAX_MIDI_DURATION_SECONDS = 10;
-
-    /// Normalizes a MIDI sequence:
-    /// - filters MIDI events, keeping only Note On/Off, Pitch Wheel, Aftertouch, Modulation Wheel,
-    ///   Sustain Pedal On/Off, Sostenuto Pedal On/Off, Soft Pedal On/Off
-    /// - sorts MIDI events in ascending order
-    /// - trims any silence at the start, shifting all events so the first event starts at timestamp 0
-    /// - trims the MIDI sequence so that no event exceeds `MAX_MIDI_DURATION_SECONDS`
-    static void normalize_midi(juce::MidiMessageSequence& midi);
 };

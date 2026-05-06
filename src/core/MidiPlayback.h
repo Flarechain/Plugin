@@ -52,7 +52,7 @@ private:
     bool active_notes[16][128] = {};
 
     std::atomic<int> midi_index;
-    std::atomic<int> sample_offset;
+    std::atomic<juce::uint32> sample_offset;
 
     std::atomic<double> sample_rate;
 

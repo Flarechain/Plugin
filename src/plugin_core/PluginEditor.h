@@ -38,6 +38,9 @@ private:
     /// Shows a modal dialog for overriding the existing pattern's MIDI with the content of a MIDI file.
     void show_pattern_import_modal(PatternId pattern_id);
 
+    /// Shows a modal dialog for overriding the existing pattern's MIDI with a recorded MIDI sequence.
+    void show_pattern_record_modal(PatternId pattern_id);
+
     /// Shows the already defined modal dialog, on top of everything,
     /// with a darker background and forcing the user to interact with it.
     void show_modal();

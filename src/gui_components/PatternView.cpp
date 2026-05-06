@@ -22,6 +22,14 @@ PatternView::PatternView(const Pattern& pattern) : pattern(pattern), more_option
     {
         if (on_stop_playing) { on_stop_playing(); }
     };
+    record_button.on_record = [this]()
+    {
+        if (on_record) { on_record(); }
+    };
+    record_button.on_stop = [this]()
+    {
+        if (on_stop_recording) { on_stop_recording(); }
+    };
 
     refresh();
 
@@ -75,7 +83,6 @@ void PatternView::refresh()
     if (pattern.has_empty_midi())
     {
         pattern_label.setAlpha(0.2f);
-        playback_control.setAlpha(0.2f);
         playback_control.setEnabled(false);
 
         more_options.clear();
@@ -84,14 +91,28 @@ void PatternView::refresh()
     else
     {
         pattern_label.setAlpha(1.0f);
-        playback_control.setAlpha(1.0f);
         playback_control.setEnabled(true);
 
         more_options.clear();
         more_options.add_item("Import MIDI file", IconPalette::Import(12, ColorPalette::Coffee500), [this]{ import_midi(); });
         more_options.add_item("Delete pattern", IconPalette::Trash(12, ColorPalette::Coffee500), [this] { delete_pattern(); });
     }
-    repaint();
+}
+
+void PatternView::set_controls_enabled(const bool enabled)
+{
+    if (enabled)
+    {
+        record_button.setEnabled(true);
+        more_options.setEnabled(true);
+        playback_control.set_play_button_enabled(true);
+    }
+    else
+    {
+        record_button.setEnabled(false);
+        more_options.setEnabled(false);
+        playback_control.set_play_button_enabled(false);
+    }
 }
 
 void PatternView::import_midi() const
@@ -102,4 +123,18 @@ void PatternView::import_midi() const
 void PatternView::delete_pattern() const
 {
     if (on_delete)  { on_delete(); }
+}
+
+void PatternView::record()
+{
+    record_button.record();
+    playback_control.set_play_button_enabled(false);
+    more_options.setEnabled(false);
+}
+
+void PatternView::stop_recording()
+{
+    record_button.stop();
+    playback_control.set_play_button_enabled(true);
+    more_options.setEnabled(true);
 }

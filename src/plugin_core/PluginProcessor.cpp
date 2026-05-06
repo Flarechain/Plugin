@@ -15,16 +15,29 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
 #endif
                        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      ), pattern_list(NUM_PATTERNS)
+      ), pattern_list(NUM_PATTERNS), recording(MAX_MIDI_DURATION_SECONDS), midi_normalizer(MAX_MIDI_DURATION_SECONDS)
 {
-    playback.on_play = [this](PatternId id)
+    playback.on_play = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStart, id });
         triggerAsyncUpdate();
     };
-    playback.on_stop = [this](PatternId id)
+    playback.on_stop = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStop, id });
+        triggerAsyncUpdate();
+    };
+
+    recording.on_record = [this](const PatternId id)
+    {
+        async_event_queue.push(AsyncEvent { AsyncEvent::Type::RecordingStart, id });
+        triggerAsyncUpdate();
+    };
+    recording.on_stop = [this](const PatternId id, juce::MidiMessageSequence midi)
+    {
+        set_midi(id, std::move(midi));
+
+        async_event_queue.push(AsyncEvent { AsyncEvent::Type::RecordingStop, id });
         triggerAsyncUpdate();
     };
 }
@@ -127,13 +140,11 @@ void FlarechainAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     if (playback.is_playing())
     {
         midiMessages = playback.get_next_buffer(buffer.getNumSamples());
-        for (auto message  : midiMessages) { DBG(message.getMessage().getDescription()); }
     }
-    // else if (is_recording)
-    // {
-    //
-    // }
-    // TODO: recording
+    else if (recording.is_recording())
+    {
+        recording.add_buffer(midiMessages, buffer.getNumSamples());
+    }
 }
 
 bool FlarechainAudioProcessor::hasEditor() const
@@ -180,6 +191,14 @@ void FlarechainAudioProcessor::handleAsyncUpdate()
         {
             if (on_playback_stop) { on_playback_stop(event.pattern_id); }
         }
+        else if (event.type == AsyncEvent::Type::RecordingStart)
+        {
+            if (on_recording_start) { on_recording_start(event.pattern_id); }
+        }
+        else if (event.type == AsyncEvent::Type::RecordingStop)
+        {
+            if (on_recording_stop) { on_recording_stop(event.pattern_id); }
+        }
     }
 }
 
@@ -190,7 +209,7 @@ void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSeq
         stop_playing();
     }
 
-    normalize_midi(midi);
+    midi_normalizer.normalize(midi);
     if (midi.getNumEvents() != 0) { pattern_list.get(id).set_midi(std::move(midi)); }
 }
 
@@ -221,6 +240,17 @@ void FlarechainAudioProcessor::play_pattern(const PatternId id)
 void FlarechainAudioProcessor::stop_playing()
 {
     playback.stop();
+}
+
+void FlarechainAudioProcessor::record_pattern(const PatternId id)
+{
+    if (playback.is_playing()) { stop_playing(); }
+    recording.record(id);
+}
+
+void FlarechainAudioProcessor::stop_recording()
+{
+    recording.stop();
 }
 
 std::set<PatternId> FlarechainAudioProcessor::get_active_patterns() const
@@ -270,40 +300,4 @@ std::optional<juce::MidiMessageSequence> FlarechainAudioProcessor::load_midi(con
 
     if (midi.getNumEvents() == 0)   return std::nullopt;
     return midi;
-}
-
-void FlarechainAudioProcessor::normalize_midi(juce::MidiMessageSequence& midi)
-{
-    if (midi.getNumEvents() == 0) return;
-
-    midi.sort();
-    midi.updateMatchedPairs();
-
-    juce::MidiMessageSequence normalized_midi;
-
-    double offset = 0;
-    bool first = true;
-
-    for (int i = 0; i < midi.getNumEvents(); ++i)
-    {
-        const auto* event = midi.getEventPointer(i);
-        if (event->message.isNoteOn(false) || event->message.isNoteOff(false) ||
-            event->message.isPitchWheel() || event->message.isAftertouch() || event->message.isControllerOfType(1) ||
-            event->message.isSustainPedalOn() || event->message.isSustainPedalOff() ||
-            event->message.isSostenutoPedalOn() || event->message.isSostenutoPedalOff() ||
-            event->message.isSoftPedalOn() || event->message.isSoftPedalOff())
-        {
-            if (first)
-            {
-                offset = event->message.getTimeStamp();
-                first = false;
-            }
-
-            if (event->message.getTimeStamp() - offset > MAX_MIDI_DURATION_SECONDS) { break; }
-            normalized_midi.addEvent(event->message, -offset);
-        }
-    }
-
-    normalized_midi.updateMatchedPairs();
-    midi = normalized_midi;
 }

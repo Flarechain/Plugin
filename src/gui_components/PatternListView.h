@@ -30,6 +30,18 @@ public:
     /// (not when the user clicks Stop).
     void stop_playing(const PatternId id) const { pattern_views[id]->stop_playing(); }
 
+    /// Updates the recording state and visual representation of RecordButton of the specified pattern.
+    ///
+    /// This method should be called when the processor has confirmed that recording has actually started
+    /// (not when the user clicks Record).
+    void record(PatternId id) const;
+
+    /// Updates the recording state and visual representation of RecordButton of the specified pattern.
+    ///
+    /// This method should be called when the processor has confirmed that recording has actually stopped
+    /// (not when the user clicks Stop).
+    void stop_recording(PatternId id) const;
+
     std::function<void(PatternId id)> on_import;
     std::function<void(PatternId id)> on_delete;
 
@@ -44,6 +56,18 @@ public:
     /// This does NOT immediately change the visual or internal playback state.
     /// Instead, it should only notify the processor that the user intends to stop playback.
     std::function<void(PatternId id)> on_stop_playing;
+
+    /// Called when the user requests to record a specific pattern.
+    ///
+    /// This does NOT immediately change the visual or internal recording state.
+    /// Instead, it should only notify the processor that the user intends to start recording.
+    std::function<void(PatternId id)> on_record;
+
+    /// Called when the user requests to stop recording a specific pattern.
+    ///
+    /// This does NOT immediately change the visual or internal recording state.
+    /// Instead, it should only notify the processor that the user intends to stop recording.
+    std::function<void(PatternId id)> on_stop_recording;
 
     /// Called when a pattern's IP address input changes.
     ///

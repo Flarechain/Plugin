@@ -28,20 +28,22 @@ void MidiPlayback::stop()
     }
 }
 
-juce::MidiBuffer MidiPlayback::get_next_buffer(int buffer_size)
+juce::MidiBuffer MidiPlayback::get_next_buffer(const int buffer_size)
 {
     auto buffer = juce::MidiBuffer();
 
     if (state == Stopping)  // if playback has to stop, send the last buffer turning off notes and controls
     {
-        for (int channel = 0; channel < 16; channel++)
+        for (int channel = 1; channel <= 16; channel++)
         {
             // turn off active notes
             for (int note = 0; note < 128; note++)
             {
-                if (active_notes[channel][note])
+                const int channel_index = channel - 1;
+                if (active_notes[channel_index][note])
                 {
                     buffer.addEvent(juce::MidiMessage::noteOff(channel, note, 0.0f), 0);
+                    active_notes[channel_index][note] = false;
                 }
             }
 
@@ -72,11 +74,12 @@ juce::MidiBuffer MidiPlayback::get_next_buffer(int buffer_size)
         const auto timestamp_seconds = message.getTimeStamp();
         const int timestamp_samples = static_cast<int>(std::round(timestamp_seconds * sample_rate));
 
-        const int sample_index = timestamp_samples - sample_offset;
+        const int sample_index = static_cast<int>(static_cast<juce::uint32>(timestamp_samples) - sample_offset);
         if (sample_index >= 0 && sample_index < buffer_size)
         {
-            if (message.isNoteOn()) { active_notes[message.getChannel()][message.getNoteNumber()] = true; }
-            else if (message.isNoteOff()) { active_notes[message.getChannel()][message.getNoteNumber()] = false; }
+            const int channel_index = message.getChannel() - 1;
+            if (message.isNoteOn()) { active_notes[channel_index][message.getNoteNumber()] = true; }
+            else if (message.isNoteOff()) { active_notes[channel_index][message.getNoteNumber()] = false; }
 
             buffer.addEvent(message, sample_index);
         }
@@ -85,7 +88,7 @@ juce::MidiBuffer MidiPlayback::get_next_buffer(int buffer_size)
         ++midi_index;
     }
 
-    sample_offset += buffer_size;
+    sample_offset += static_cast<juce::uint32>(buffer_size);
     return buffer;
 }
 

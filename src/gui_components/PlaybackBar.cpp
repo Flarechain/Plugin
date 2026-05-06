@@ -40,6 +40,21 @@ void PlaybackControl::PlaybackBar::paint(juce::Graphics& g)
     );
 }
 
+void PlaybackControl::PlaybackBar::enablementChanged()
+{
+    if (isEnabled())
+    {
+        setAlpha(1.0f);
+        setInterceptsMouseClicks(true, true);
+    }
+    else
+    {
+        setAlpha(0.2f);
+        setInterceptsMouseClicks(false, false);
+    }
+    repaint();
+}
+
 void PlaybackControl::PlaybackBar::play()
 {
 

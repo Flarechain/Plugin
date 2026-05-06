@@ -26,3 +26,18 @@ void MoreOptionsButton::paintButton(juce::Graphics& g, const bool isMouseOverBut
         1.0f
     );
 }
+
+void MoreOptionsButton::enablementChanged()
+{
+    if (isEnabled())
+    {
+        setAlpha(1.0f);
+        setInterceptsMouseClicks(true, true);
+    }
+    else
+    {
+        setAlpha(0.2f);
+        setInterceptsMouseClicks(false, false);
+    }
+    repaint();
+}
