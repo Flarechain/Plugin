@@ -108,3 +108,19 @@ std::optional<float> OscParser::get_float(const juce::String& string)
     float value = string.substring(start).getFloatValue();
     return negative ? -value : value;
 }
+
+juce::String toString(const juce::OSCMessage& osc_message)
+{
+    juce::String string;
+    string << osc_message.getAddressPattern().toString();
+
+    for (int i = 0; i < osc_message.size(); ++i)
+    {
+        const auto& arg = osc_message[i];
+        if (arg.isInt32()) { string << " " << arg.getInt32(); }
+        else if (arg.isFloat32()) { string << " " << arg.getFloat32(); }
+        else if (arg.isString()) { string << " " << arg.getString(); }
+    }
+
+    return string;
+}

@@ -1,7 +1,7 @@
 #include "PlaybackControl.h"
 #include "palettes/Palette.h"
 
-PlaybackControl::PlaybackBar::PlaybackBar(double &progress) : juce::ProgressBar(progress)
+PlaybackControl::PlaybackBar::PlaybackBar(double &progress) : juce::ProgressBar(progress), fill_gradient(false)
 {
     setSize(250, 12);
 }
@@ -30,7 +30,8 @@ void PlaybackControl::PlaybackBar::paint(juce::Graphics& g)
         ColorPalette::Red500,
         static_cast<float>(inner_bar_width)
     );
-    g.setGradientFill(fill_color);
+    if (fill_gradient) { g.setGradientFill(fill_color); }
+    else { g.setColour(ColorPalette::Orange500); }
     g.fillRoundedRectangle(
         stroke_weight,
         stroke_weight,
@@ -45,11 +46,13 @@ void PlaybackControl::PlaybackBar::enablementChanged()
     if (isEnabled())
     {
         setAlpha(1.0f);
+        fill_gradient = true;
         setInterceptsMouseClicks(true, true);
     }
     else
     {
         setAlpha(0.2f);
+        fill_gradient = false;
         setInterceptsMouseClicks(false, false);
     }
     repaint();

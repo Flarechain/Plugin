@@ -4,6 +4,7 @@
 
 #include "../gui_components/Components.h"
 #include "../model/Instrument.h"
+#include "../core/OscParser.h"
 
 class FlarechainAudioProcessorEditor final : public juce::AudioProcessorEditor
 {

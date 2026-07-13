@@ -2,8 +2,9 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-#include "../core/MidiPlayback.h"
-#include "../core/MidiRecording.h"
+#include "../core/MidiPlaybackEngine.h"
+#include "../core/MidiRecordingEngine.h"
+#include "../core/InferenceEngine.h"
 #include "../core/RealtimeBuffer.h"
 #include "../core/MidiNormalizer.h"
 #include "../model/PatternList.h"
@@ -12,7 +13,7 @@ class FlarechainAudioProcessor final : public juce::AudioProcessor, juce::AsyncU
 {
 public:
     FlarechainAudioProcessor();
-    ~FlarechainAudioProcessor() override = default;
+    ~FlarechainAudioProcessor() override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -57,7 +58,7 @@ public:
     std::set<PatternId> get_patterns_with_invalid_osc() const;
 
     /// Returns whether the AI model has been downloaded.
-    bool is_model_downloaded() const { return false; }
+    bool is_model_downloaded() const { return true; }
 
     /// Sets the MIDI sequence for the specified pattern. The given MIDI is normalized before being stored in the pattern.
     void set_midi(PatternId id, juce::MidiMessageSequence midi);
@@ -96,6 +97,7 @@ public:
     std::function<void(PatternId id)> on_playback_stop;
     std::function<void(PatternId id)> on_recording_start;
     std::function<void(PatternId id)> on_recording_stop;
+    std::function<void(PatternId id)> on_pattern_detected;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
@@ -108,7 +110,8 @@ private:
             PlaybackStart,
             PlaybackStop,
             RecordingStart,
-            RecordingStop
+            RecordingStop,
+            PatternDetected
         };
 
         Type type;
@@ -116,12 +119,17 @@ private:
     };
 
     PatternList pattern_list;
-    MidiPlayback playback;
-    MidiRecording recording;
     MidiNormalizer midi_normalizer;
-
     RealtimeBuffer<AsyncEvent, 16> async_event_queue;
+    juce::OSCSender osc_sender;
 
-    // maximum midi duration for every pattern
-    static constexpr juce::uint8 MAX_MIDI_DURATION_SECONDS = 10;
+    MidiPlaybackEngine playback_engine;
+    MidiRecordingEngine recording_engine;
+    InferenceEngine inference_engine;
+
+    static constexpr juce::uint8 NUM_PATTERNS = 5;
+    static constexpr juce::uint8 MAX_MIDI_DURATION_SECONDS = 10;    // maximum midi duration for every pattern
+
+    // TODO: docs
+    void send_osc_message(PatternId id);
 };

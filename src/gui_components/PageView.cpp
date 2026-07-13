@@ -16,6 +16,7 @@ PageView::PageView(const PatternList& pattern_list) :
 
     addAndMakeVisible(tab_bar);
     addAndMakeVisible(pattern_list_view);
+    addAndMakeVisible(detection_view);
     addAndMakeVisible(log_panel);
     setSize(704, 428 + tab_bar.getHeight());
 }
@@ -27,10 +28,17 @@ void PageView::resized()
     tab_bar.setBounds(tab_bar_bounds);
 
     auto page_content_bounds = juce::Rectangle<int>(0, tab_bar.getHeight(), getWidth(), getHeight() - tab_bar.getHeight());
+    constexpr int GAP = 28;
+    auto detection_bounds = juce::Rectangle(0, 0, log_panel.getWidth(), detection_view.getHeight() + GAP + log_panel.getHeight());
+    placement = { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
+    detection_bounds = placement.appliedTo(detection_bounds, getLocalBounds());
+    detection_bounds.translate(0, 16);
+
     switch (current_page)
     {
         case Page::PatternSetup:
             pattern_list_view.setVisible(true);
+            detection_view.setVisible(false);
             log_panel.setVisible(false);
 
             placement = { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
@@ -38,12 +46,14 @@ void PageView::resized()
             pattern_list_view.setBounds(page_content_bounds);
             break;
         case Page::LiveDetection:
+            detection_view.setVisible(true);
             log_panel.setVisible(true);
             pattern_list_view.setVisible(false);
 
-            placement = { juce::RectanglePlacement::centred | juce::RectanglePlacement::doNotResize };
-            page_content_bounds = placement.appliedTo(log_panel.getLocalBounds(), page_content_bounds);
-            log_panel.setBounds(page_content_bounds);
+            placement = { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yTop | juce::RectanglePlacement::doNotResize };
+            detection_view.setBounds(placement.appliedTo(detection_view.getLocalBounds(), detection_bounds));
+            placement = { juce::RectanglePlacement::xMid | juce::RectanglePlacement::yBottom | juce::RectanglePlacement::doNotResize };
+            log_panel.setBounds(placement.appliedTo(log_panel.getLocalBounds(), detection_bounds));
             break;
         default:
             break;

@@ -18,7 +18,7 @@ public:
     /// allowing spaces inside the value (e.g. "turn on").
     ///
     /// Note:
-    /// - Unquoted "true" / "false" are parsed as booleans.
+    /// - Unquoted true / false are parsed as booleans.
     /// - Quoted "true" is treated as a string.
     /// @code
     /// juce::OSCMessage osc = OscParser::parse("/address true 0.5 -6");
@@ -30,3 +30,5 @@ private:
     static std::optional<int> get_int(const juce::String& string);
     static std::optional<float> get_float(const juce::String& string);
 };
+
+juce::String toString(const juce::OSCMessage& osc_message);

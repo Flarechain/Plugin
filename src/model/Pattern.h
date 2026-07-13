@@ -16,6 +16,7 @@ public:
     [[nodiscard]] PatternName get_name() const { return name; }
     [[nodiscard]] juce::MidiMessageSequence get_midi() const { return midi; }
     [[nodiscard]] Event& get_event() { return event; }
+    [[nodiscard]] const Event& get_event() const { return event; }
     [[nodiscard]] bool has_empty_midi() const { return midi.getNumEvents() == 0; }
 
     void set_midi(juce::MidiMessageSequence midi) { this->midi = midi; }

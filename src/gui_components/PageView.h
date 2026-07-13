@@ -5,6 +5,7 @@
 #include "TabBar.h"
 #include "PatternListView.h"
 #include "LogPanel.h"
+#include "PatternDetectionView.h"
 
 class PageView : public juce::Component
 {
@@ -20,6 +21,8 @@ public:
     void refresh() const;
 
     PatternListView& get_pattern_list_view() { return pattern_list_view; }
+    LogPanel& get_log_panel() { return log_panel; }
+    PatternDetectionView& get_detection_view() { return detection_view; }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PageView)
@@ -28,5 +31,6 @@ private:
 
     TabBar tab_bar;
     PatternListView pattern_list_view;
+    PatternDetectionView detection_view;
     LogPanel log_panel;
 };

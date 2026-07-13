@@ -1,11 +1,7 @@
 #include "PluginProcessor.h"
-#include "PluginProcessor.h"
-
-#include <objc/objc.h>
-
 #include "PluginEditor.h"
 
-constexpr juce::uint8 NUM_PATTERNS = 5;
+#include <objc/objc.h>
 
 FlarechainAudioProcessor::FlarechainAudioProcessor()
     : AudioProcessor(BusesProperties()
@@ -15,31 +11,56 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
 #endif
                        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      ), pattern_list(NUM_PATTERNS), recording(MAX_MIDI_DURATION_SECONDS), midi_normalizer(MAX_MIDI_DURATION_SECONDS)
+      ), pattern_list(NUM_PATTERNS), midi_normalizer(MAX_MIDI_DURATION_SECONDS), recording_engine(MAX_MIDI_DURATION_SECONDS)
 {
-    playback.on_play = [this](const PatternId id)
+    playback_engine.on_play = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStart, id });
         triggerAsyncUpdate();
     };
-    playback.on_stop = [this](const PatternId id)
+    playback_engine.on_stop = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStop, id });
         triggerAsyncUpdate();
     };
 
-    recording.on_record = [this](const PatternId id)
+    recording_engine.on_record = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::RecordingStart, id });
         triggerAsyncUpdate();
     };
-    recording.on_stop = [this](const PatternId id, juce::MidiMessageSequence midi)
+    recording_engine.on_stop = [this](const PatternId id, juce::MidiMessageSequence midi)
     {
         set_midi(id, std::move(midi));
 
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::RecordingStop, id });
         triggerAsyncUpdate();
     };
+
+    inference_engine.on_pattern_detected = [this](const PatternId id)
+    {
+        async_event_queue.push(AsyncEvent { AsyncEvent::Type::PatternDetected, id });
+        triggerAsyncUpdate();
+    };
+
+    // load the AI model and start the inference engine
+    juce::File model_file;
+    #if JUCE_MAC
+        model_file = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+            .getParentDirectory()
+            .getParentDirectory()
+            .getChildFile("Resources/Models/default.onnx");
+    #else
+        model_file = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+            .getParentDirectory()
+            .getChildFile("Models/default.onnx");
+    #endif
+    inference_engine.start(model_file, 0.8f);
+}
+
+FlarechainAudioProcessor::~FlarechainAudioProcessor()
+{
+
 }
 
 const juce::String FlarechainAudioProcessor::getName() const
@@ -108,7 +129,9 @@ void FlarechainAudioProcessor::changeProgramName (int index, const juce::String&
 
 void FlarechainAudioProcessor::prepareToPlay (const double sampleRate, const int samplesPerBlock)
 {
-    playback.set_sample_rate(sampleRate);
+    juce::ignoreUnused (samplesPerBlock);
+
+    playback_engine.set_sample_rate(sampleRate);
 }
 
 void FlarechainAudioProcessor::releaseResources()
@@ -137,13 +160,17 @@ bool FlarechainAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 
 void FlarechainAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    if (playback.is_playing())
+    if (playback_engine.is_playing())
     {
-        midiMessages = playback.get_next_buffer(buffer.getNumSamples());
+        midiMessages = playback_engine.get_next_buffer(buffer.getNumSamples());
     }
-    else if (recording.is_recording())
+    else if (recording_engine.is_recording())
     {
-        recording.add_buffer(midiMessages, buffer.getNumSamples());
+        recording_engine.add_buffer(midiMessages, buffer.getNumSamples());
+    }
+    else if (is_model_downloaded())
+    {
+        inference_engine.push_buffer(midiMessages);
     }
 }
 
@@ -199,12 +226,21 @@ void FlarechainAudioProcessor::handleAsyncUpdate()
         {
             if (on_recording_stop) { on_recording_stop(event.pattern_id); }
         }
+        else if (event.type == AsyncEvent::Type::PatternDetected)
+        {
+            const auto pattern = pattern_list.get(event.pattern_id);
+            if (pattern.get_event().get_ip_address() && pattern.get_event().get_osc_message())
+            {
+                send_osc_message(event.pattern_id);
+                if (on_pattern_detected) { on_pattern_detected(event.pattern_id); }
+            }
+        }
     }
 }
 
 void FlarechainAudioProcessor::set_midi(const PatternId id, juce::MidiMessageSequence midi)
 {
-    if (playback.is_playing() && playback.get_playing_pattern() == id)
+    if (playback_engine.is_playing() && playback_engine.get_playing_pattern() == id)
     {
         stop_playing();
     }
@@ -225,7 +261,7 @@ void FlarechainAudioProcessor::set_osc_message(const PatternId id, std::optional
 
 void FlarechainAudioProcessor::delete_pattern(const PatternId id)
 {
-    if (playback.is_playing() && playback.get_playing_pattern() == id)
+    if (playback_engine.is_playing() && playback_engine.get_playing_pattern() == id)
     {
         stop_playing();
     }
@@ -234,23 +270,23 @@ void FlarechainAudioProcessor::delete_pattern(const PatternId id)
 
 void FlarechainAudioProcessor::play_pattern(const PatternId id)
 {
-    playback.play(id, pattern_list.get(id).get_midi());
+    playback_engine.play(id, pattern_list.get(id).get_midi());
 }
 
 void FlarechainAudioProcessor::stop_playing()
 {
-    playback.stop();
+    playback_engine.stop();
 }
 
 void FlarechainAudioProcessor::record_pattern(const PatternId id)
 {
-    if (playback.is_playing()) { stop_playing(); }
-    recording.record(id);
+    if (playback_engine.is_playing()) { stop_playing(); }
+    recording_engine.record(id);
 }
 
 void FlarechainAudioProcessor::stop_recording()
 {
-    recording.stop();
+    recording_engine.stop();
 }
 
 std::set<PatternId> FlarechainAudioProcessor::get_active_patterns() const
@@ -300,4 +336,19 @@ std::optional<juce::MidiMessageSequence> FlarechainAudioProcessor::load_midi(con
 
     if (midi.getNumEvents() == 0)   return std::nullopt;
     return midi;
+}
+
+void FlarechainAudioProcessor::send_osc_message(const PatternId id)
+{
+    const auto event = pattern_list.get(id).get_event();
+    if (event.get_ip_address() && event.get_osc_message())
+    {
+        const auto ip = event.get_ip_address().value().toString();
+        osc_sender.connect(ip, 7700);
+        osc_sender.sendToIPAddress(
+            ip,
+            7700,
+            event.get_osc_message().value()
+        );
+    }
 }

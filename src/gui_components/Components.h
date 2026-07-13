@@ -20,3 +20,4 @@
 #include "LinkButton.h"
 #include "LogPanel.h"
 #include "ModalDialog.h"
+#include "PatternDetectionView.h"

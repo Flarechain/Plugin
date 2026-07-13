@@ -100,6 +100,19 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
         page_view.refresh();
         update_status();
     };
+    processorRef.on_pattern_detected = [this](const PatternId pattern_id)
+    {
+        const auto pattern = processorRef.get_pattern(pattern_id);
+        const auto ip = pattern.get_event().get_ip_address().value();
+        const auto osc_message = pattern.get_event().get_osc_message().value();
+        
+        page_view.get_detection_view().set_detection_label(pattern.get_name());
+        page_view.get_log_panel().add_log(
+            LogText(juce::String(juce::String("Event ") + juce::String(pattern.get_name()) + juce::String(":")))
+            << LogText(" sent OSC message") << LogText(toString(osc_message)).highlight()
+            << LogText("to") << LogText(ip.toString()).highlight()
+        );
+    };
 
     update_status();
 

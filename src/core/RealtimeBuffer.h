@@ -12,6 +12,8 @@ public:
 
     bool push(const T& item);
     bool pop(T& item);
+    int count() const { return fifo.getNumReady(); }
+    void clear() { fifo.reset(); }
 
 private:
     juce::AbstractFifo fifo { Size };

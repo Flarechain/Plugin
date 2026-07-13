@@ -5,6 +5,9 @@ project(Flarechain VERSION 0.0.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_XCODE_GENERATE_SCHEME OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks")
+set(CMAKE_MACOSX_RPATH TRUE)
 
 set(CPM_DOWNLOAD_VERSION 0.42.0)
 set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
@@ -29,6 +32,52 @@ CPMAddPackage(
         GIT_TAG v3.14.0
 )
 
+if(APPLE)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|ARM64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-osx-arm64-1.23.0.tgz)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-osx-x86_64-1.23.0.tgz)
+    else ()
+        message(FATAL_ERROR "Unsupported Mac architecture")
+    endif()
+elseif(WIN32)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|ARM64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-win-arm64-1.23.0.tgz)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-win-x64-1.23.0.tgz)
+    else ()
+        message(FATAL_ERROR "Unsupported Windows architecture")
+    endif()
+elseif(UNIX)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|AARCH64|arm64|ARM64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-linux-aarch64-1.23.0.tgz)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+        set(ONNX_URL https://github.com/microsoft/onnxruntime/releases/download/v1.23.0/onnxruntime-linux-x64-1.23.0.tgz)
+    else ()
+        message(FATAL_ERROR "Unsupported Linux architecture")
+    endif()
+endif()
+
+CPMAddPackage(
+        NAME onnxruntime
+        URL ${ONNX_URL}
+)
+
+add_library(onnxruntime SHARED IMPORTED GLOBAL)
+
+if(APPLE)
+    set(ORT_LIB ${onnxruntime_SOURCE_DIR}/lib/libonnxruntime.dylib)
+elseif(WIN32)
+    set(ORT_LIB ${onnxruntime_SOURCE_DIR}/lib/onnxruntime.lib)
+elseif(UNIX)
+    set(ORT_LIB ${onnxruntime_SOURCE_DIR}/lib/libonnxruntime.so)
+endif()
+
+set_target_properties(onnxruntime PROPERTIES
+        IMPORTED_LOCATION ${ORT_LIB}
+        INTERFACE_INCLUDE_DIRECTORIES ${onnxruntime_SOURCE_DIR}/include
+)
+
 file(GLOB PluginCoreFiles src/plugin_core/*)
 file(GLOB CoreFiles src/core/*)
 file(GLOB ModelFiles src/model/*)
@@ -42,6 +91,7 @@ set(SourceFiles
         ${TestFiles}
 )
 
+set(PLUGIN_FORMATS VST3 AU Standalone)
 juce_add_plugin(${PROJECT_NAME}
         COMPANY_NAME "Dennis Battisti"
         IS_SYNTH TRUE
@@ -54,8 +104,93 @@ juce_add_plugin(${PROJECT_NAME}
         PLUGIN_CODE Flar
         PRODUCT_NAME "Flarechain"
         BUNDLE_ID "com.dennisbattisti.flarechain"
-        FORMATS VST3 AU Standalone
+        FORMATS ${PLUGIN_FORMATS}
 )
+
+foreach(format ${PLUGIN_FORMATS})
+    if(TARGET ${PROJECT_NAME}_${format})
+        if(APPLE)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}_${format}>/Frameworks"
+
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${ORT_LIB}
+                    "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}_${format}>/Frameworks/libonnxruntime.1.23.0.dylib"
+
+                    COMMENT "Copying onnxruntime into ${format} bundle"
+            )
+            set_target_properties(${PROJECT_NAME}_${format} PROPERTIES
+                    SKIP_BUILD_RPATH FALSE
+                    BUILD_WITH_INSTALL_RPATH TRUE
+                    INSTALL_RPATH "@loader_path/../Frameworks"
+            )
+        elseif(WIN32)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${onnxruntime_SOURCE_DIR}/lib/onnxruntime.dll
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>"
+
+                    COMMENT "Copying onnxruntime dll for ${format}"
+            )
+        elseif(UNIX)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${ORT_LIB}
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>"
+
+                    COMMAND patchelf --set-rpath "$$ORIGIN"
+                    "$<TARGET_FILE:${PROJECT_NAME}_${format}>"
+
+                    COMMENT "Copying onnxruntime so for ${format}"
+            )
+        endif()
+    endif()
+endforeach()
+
+foreach(format ${PLUGIN_FORMATS})
+    if(TARGET ${PROJECT_NAME}_${format})
+        if(APPLE)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}_${format}>/Resources/Models"
+
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${CMAKE_SOURCE_DIR}/ai_models/default.onnx"
+                    "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}_${format}>/Resources/Models/default.onnx"
+
+                    COMMENT "Copying ONNX model into ${format} bundle"
+            )
+
+        elseif(WIN32)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+
+                    COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>/Resources/Models"
+
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${CMAKE_SOURCE_DIR}/ai_models/default.onnx"
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>/Resources/Models/default.onnx"
+
+                    COMMENT "Copying ONNX model for ${format}"
+            )
+
+        elseif(UNIX)
+            add_custom_command(TARGET ${PROJECT_NAME}_${format} POST_BUILD
+
+                    COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>/Resources/Models"
+
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${CMAKE_SOURCE_DIR}/ai_models/default.onnx"
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}_${format}>/Resources/Models/default.onnx"
+
+                    COMMENT "Copying ONNX model for ${format}"
+            )
+        endif()
+
+    endif()
+endforeach()
 
 # Collect all assets files
 file(GLOB_RECURSE AssetFiles ${CMAKE_SOURCE_DIR}/assets/*)
@@ -100,6 +235,7 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
         juce::juce_osc
+        onnxruntime
 )
 
 file(GLOB_RECURSE TestFiles src/tests/*)
@@ -127,4 +263,5 @@ target_link_libraries(tests
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
         juce::juce_osc
+        onnxruntime
 )

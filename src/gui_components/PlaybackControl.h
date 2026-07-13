@@ -1,13 +1,14 @@
 #pragma once
 
 #include <juce_gui_basics/juce_gui_basics.h>
+#include "../model/Pattern.h"
 #include "palettes/Palette.h"
 
 class PlaybackControl : public juce::Component
 {
 public:
     /// Creates a new PlaybackControl, composed of a PlayButton and a PlaybackBar.
-    PlaybackControl();
+    explicit PlaybackControl();
 
     ~PlaybackControl() override = default;
 
@@ -83,6 +84,8 @@ private:
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaybackBar)
+
+        bool fill_gradient;
     };
 
     PlayButton play_button;
