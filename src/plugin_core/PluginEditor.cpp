@@ -81,6 +81,10 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
         processorRef.set_osc_message(pattern_id, std::move(osc));
         update_status();
     };
+    page_view.get_log_panel().on_open_file = [this]()
+    {
+        processorRef.get_log_file().startAsProcess();
+    };
 
     processorRef.on_playback_start = [this](const PatternId pattern_id)
     {

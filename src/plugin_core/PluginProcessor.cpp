@@ -11,7 +11,8 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
 #endif
                        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      ), pattern_list(NUM_PATTERNS), midi_normalizer(MAX_MIDI_DURATION_SECONDS), recording_engine(MAX_MIDI_DURATION_SECONDS)
+      ),    pattern_list(NUM_PATTERNS), midi_normalizer(MAX_MIDI_DURATION_SECONDS),
+            recording_engine(MAX_MIDI_DURATION_SECONDS), inference_engine(NUM_PATTERNS)
 {
     playback_engine.on_play = [this](const PatternId id)
     {
@@ -56,11 +57,16 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
             .getChildFile("Models/default.onnx");
     #endif
     inference_engine.start(model_file, 0.8f);
+
+    log_file = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+        .getChildFile("Flarechain/flarechain.log");
+    logger = std::make_unique<juce::FileLogger>(log_file, "Flarechain Log of Detected Patterns");
+    juce::Logger::setCurrentLogger(logger.get());
 }
 
 FlarechainAudioProcessor::~FlarechainAudioProcessor()
 {
-
+    juce::Logger::setCurrentLogger(nullptr);
 }
 
 const juce::String FlarechainAudioProcessor::getName() const
@@ -232,6 +238,11 @@ void FlarechainAudioProcessor::handleAsyncUpdate()
             if (pattern.get_event().get_ip_address() && pattern.get_event().get_osc_message())
             {
                 send_osc_message(event.pattern_id);
+
+                juce::Logger::writeToLog("Event " + pattern.get_name()
+                    + ": sent OSC message \"" + toString(pattern.get_event().get_osc_message().value())
+                    + "\" to " + pattern.get_event().get_ip_address()->toString());
+
                 if (on_pattern_detected) { on_pattern_detected(event.pattern_id); }
             }
         }

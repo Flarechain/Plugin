@@ -1,7 +1,7 @@
 #include "InferenceEngine.h"
 
-InferenceEngine::InferenceEngine() : thread(*this), state(NotInferencing), threshold(0.0f),
-    sequence_length(0), pitch_wheel(PitchWheel::Center)
+InferenceEngine::InferenceEngine(int num_patterns) : num_patterns(num_patterns), thread(*this), state(NotInferencing),
+    threshold(0.0f), sequence_length(0), pitch_wheel(PitchWheel::Center)
 {
     env = Ort::Env(ORT_LOGGING_LEVEL_WARNING, "InferenceEngine");
 
@@ -117,7 +117,7 @@ void InferenceEngine::InferenceThread::run()
             }
 
             const juce::uint8 label = static_cast<juce::uint8>(result);
-            if (label < 5)
+            if (label < engine.num_patterns)
             {
                 if (engine.on_pattern_detected) { engine.on_pattern_detected(label); }
             }

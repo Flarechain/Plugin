@@ -47,6 +47,8 @@ public:
     const PatternList& get_pattern_list() const { return pattern_list; }
     const Pattern& get_pattern(const PatternId id) const { return pattern_list.get(id); }
 
+    const juce::File& get_log_file() const { return log_file; }
+
     /// Returns the IDs of patterns that contain MIDI data,
     /// i.e., patterns that were populated by recording MIDI sequence or by importing a MIDI file.
     std::set<PatternId> get_active_patterns() const;
@@ -123,6 +125,9 @@ private:
     RealtimeBuffer<AsyncEvent, 16> async_event_queue;
     juce::OSCSender osc_sender;
 
+    juce::File log_file;
+    std::unique_ptr<juce::FileLogger> logger;
+
     MidiPlaybackEngine playback_engine;
     MidiRecordingEngine recording_engine;
     InferenceEngine inference_engine;
@@ -130,6 +135,6 @@ private:
     static constexpr juce::uint8 NUM_PATTERNS = 5;
     static constexpr juce::uint8 MAX_MIDI_DURATION_SECONDS = 10;    // maximum midi duration for every pattern
 
-    // TODO: docs
+    /// Sends the pattern's OSC message to the related IP address.
     void send_osc_message(PatternId id);
 };

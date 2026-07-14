@@ -17,7 +17,7 @@ namespace PitchWheel
 class InferenceEngine
 {
 public:
-    InferenceEngine();
+    InferenceEngine(int num_patterns);
     ~InferenceEngine();
 
     void start(juce::File model_file, float threshold);
@@ -48,6 +48,7 @@ private:
         InferenceEngine& engine;
     };
 
+    const int num_patterns;
     InferenceThread thread;
     std::atomic<State> state;
     Ort::Env env;
