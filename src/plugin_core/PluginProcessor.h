@@ -8,6 +8,7 @@
 #include "../core/RealtimeBuffer.h"
 #include "../core/MidiNormalizer.h"
 #include "../model/PatternList.h"
+#include "../model/Instrument.h"
 
 class FlarechainAudioProcessor final : public juce::AudioProcessor, juce::AsyncUpdater
 {
@@ -48,6 +49,7 @@ public:
     const Pattern& get_pattern(const PatternId id) const { return pattern_list.get(id); }
 
     const juce::File& get_log_file() const { return log_file; }
+    const Instrument& get_selected_instrument() const { return selected_instrument; }
 
     /// Returns the IDs of patterns that contain MIDI data,
     /// i.e., patterns that were populated by recording MIDI sequence or by importing a MIDI file.
@@ -70,6 +72,9 @@ public:
 
     /// Sets the given OSC message to the specified pattern.
     void set_osc_message(PatternId id, std::optional<juce::OSCMessage> osc) const;
+
+    /// Sets the selected instrument with the given one.
+    void set_selected_instrument(const Instrument instrument) { selected_instrument = instrument; }
 
     /// Deletes MIDI and event's data for the specified pattern.
     void delete_pattern(PatternId id);
@@ -100,6 +105,7 @@ public:
     std::function<void(PatternId id)> on_recording_start;
     std::function<void(PatternId id)> on_recording_stop;
     std::function<void(PatternId id)> on_pattern_detected;
+    std::function<void()> on_preset_loaded;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FlarechainAudioProcessor)
@@ -113,7 +119,8 @@ private:
             PlaybackStop,
             RecordingStart,
             RecordingStop,
-            PatternDetected
+            PatternDetected,
+            PresetLoaded
         };
 
         Type type;
@@ -121,6 +128,8 @@ private:
     };
 
     PatternList pattern_list;
+    Instrument selected_instrument;
+
     MidiNormalizer midi_normalizer;
     RealtimeBuffer<AsyncEvent, 16> async_event_queue;
     juce::OSCSender osc_sender;

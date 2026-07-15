@@ -3,7 +3,7 @@
 #include "palettes/Palette.h"
 
 template <typename T>
-DropdownMenu<T>::DropdownItem::DropdownItem(const juce::String& text, const int width) : juce::ToggleButton(text)
+DropdownMenu<T>::DropdownItem::DropdownItem(Item<T> item, const int width) : juce::ToggleButton(item.label), item(item)
 {
     const auto font = FontPalette::Text_S_Medium;
     setSize(width, static_cast<int>(font.getHeight()) + PADDING_Y * 2);

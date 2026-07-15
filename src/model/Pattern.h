@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_data_structures/juce_data_structures.h>
 #include "Event.h"
 
 typedef juce::uint8 PatternId;
@@ -23,6 +24,12 @@ public:
 
     /// Resets the Pattern by clearing its MIDI and event.
     void clear();
+
+    /// Serializes the pattern to a ValueTree.
+    juce::ValueTree to_value_tree() const;
+
+    /// Restores the pattern from a ValueTree.
+    void from_value_tree(const juce::ValueTree& state);
 
 private:
     PatternId id;

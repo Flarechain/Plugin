@@ -14,6 +14,8 @@ FlarechainAudioProcessor::FlarechainAudioProcessor()
       ),    pattern_list(NUM_PATTERNS), midi_normalizer(MAX_MIDI_DURATION_SECONDS),
             recording_engine(MAX_MIDI_DURATION_SECONDS), inference_engine(NUM_PATTERNS)
 {
+    selected_instrument = Instrument::Guitar;
+
     playback_engine.on_play = [this](const PatternId id)
     {
         async_event_queue.push(AsyncEvent { AsyncEvent::Type::PlaybackStart, id });
@@ -192,17 +194,28 @@ juce::AudioProcessorEditor* FlarechainAudioProcessor::createEditor()
 
 void FlarechainAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-    juce::ignoreUnused (destData);
+    juce::ValueTree state("FlarechainState");
+    state.setProperty("version", JucePlugin_VersionString, nullptr);
+
+    state.appendChild(pattern_list.to_value_tree(), nullptr);
+    state.appendChild(to_value_tree(selected_instrument), nullptr);
+
+    juce::MemoryOutputStream stream(destData, false);
+    state.writeToStream(stream);
 }
 
 void FlarechainAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    juce::ignoreUnused (data, sizeInBytes);
+    const auto state = juce::ValueTree::readFromData(data, static_cast<size_t>(sizeInBytes));
+    pattern_list.from_value_tree(state.getChildWithName("PatternList"));
+    const auto instrument_tree = state.getChildWithName("Instrument");
+    if (const auto instrument = from_value_tree(instrument_tree))
+    {
+        selected_instrument = instrument.value();
+    }
+
+    async_event_queue.push(AsyncEvent { AsyncEvent::Type::PresetLoaded, 0 });
+    triggerAsyncUpdate();
 }
 
 // This creates new instances of the plugin.
@@ -245,6 +258,10 @@ void FlarechainAudioProcessor::handleAsyncUpdate()
 
                 if (on_pattern_detected) { on_pattern_detected(event.pattern_id); }
             }
+        }
+        else if (event.type == AsyncEvent::Type::PresetLoaded)
+        {
+            if (on_preset_loaded) { on_preset_loaded(); }
         }
     }
 }

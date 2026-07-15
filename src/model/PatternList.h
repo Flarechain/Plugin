@@ -1,5 +1,7 @@
 #pragma once
 
+#include <juce_data_structures/juce_data_structures.h>
+
 #include "Pattern.h"
 
 class PatternList
@@ -16,6 +18,12 @@ public:
 
     [[nodiscard]] juce::uint8 length() const { return static_cast<juce::uint8>(list.size()); }
     [[nodiscard]] Pattern& get(const PatternId pattern_id) const { return *list.at(pattern_id); }
+
+    /// Serializes the PatternList to a ValueTree.
+    juce::ValueTree to_value_tree() const;
+
+    /// Restores the PatternList from a ValueTree.
+    void from_value_tree(const juce::ValueTree& state);
 
 private:
     std::vector<std::unique_ptr<Pattern>> list;

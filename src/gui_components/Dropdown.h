@@ -22,6 +22,8 @@ public:
     void add_item(T item_id, juce::String item_text, bool selected);
 
     T get_selected_item() const;
+    void set_selected_item(T item);
+
     std::function<void(Item<T>)> on_change;
 
 private:

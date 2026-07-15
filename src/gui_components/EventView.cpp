@@ -79,6 +79,11 @@ void EventView::refresh()
         text_field.setEnabled(true);
         ip_address_field.setInterceptsMouseClicks(false, true);
         text_field.setInterceptsMouseClicks(true, true);
+
+        const auto ip_address = pattern.get_event().get_ip_address();
+        const auto osc_message = pattern.get_event().get_osc_message();
+        if (ip_address) { ip_address_field.set_ip(ip_address.value()); }
+        if (osc_message) { text_field.setText(toString(osc_message.value())); }
     }
     repaint();
 }

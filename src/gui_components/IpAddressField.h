@@ -14,6 +14,8 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    void set_ip(const juce::IPAddress& ip_address);
+
     /// Clears all fields of the IP address.
     void clear();
 

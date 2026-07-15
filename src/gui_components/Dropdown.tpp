@@ -37,6 +37,19 @@ void Dropdown<T>::add_item(T item_id, juce::String item_text, bool selected)
 }
 
 template <typename T>
+void Dropdown<T>::set_selected_item(T item)
+{
+    for (const auto& x : menu.items)
+    {
+        if (x.get()->get_item().id == item)
+        {
+            selected_item = x.get()->get_item();
+            x.get()->triggerClick();
+        }
+    }
+}
+
+template <typename T>
 T Dropdown<T>::get_selected_item() const
 {
     return selected_item.id;

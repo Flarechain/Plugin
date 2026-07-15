@@ -30,9 +30,10 @@ void DropdownMenu<T>::paint(juce::Graphics& g)
 template <typename T>
 void DropdownMenu<T>::add_item(T id, juce::String text, const bool selected)
 {
-    auto item = std::make_unique<DropdownItem>(text, width - PADDING * 2);
-    item->setRadioGroupId(1);
-    item->onClick = [this, id, text]()
+    auto item = Item<T>{id, text};
+    auto dropdown_item = std::make_unique<DropdownItem>(item, width - PADDING * 2);
+    dropdown_item->setRadioGroupId(1);
+    dropdown_item->onClick = [this, id, text]()
     {
         set_selected_item(Item<T>{id, text});
     };
@@ -40,10 +41,10 @@ void DropdownMenu<T>::add_item(T id, juce::String text, const bool selected)
     if (items.empty() || selected)
     {
         set_selected_item(Item<T>{id, text});
-        item->triggerClick();
+        dropdown_item->triggerClick();
     }
 
-    items.push_back(std::move(item));
+    items.push_back(std::move(dropdown_item));
     addAndMakeVisible(*items.back());
 
     setSize(items.at(0)->getWidth() + PADDING * 2,

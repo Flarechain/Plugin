@@ -83,6 +83,7 @@ void PatternView::refresh()
     if (pattern.has_empty_midi())
     {
         pattern_label.setAlpha(0.2f);
+        playback_control.setEnabled(true);  // this forces setEnabled to be called on "false" even if it was already on false
         playback_control.setEnabled(false);
 
         more_options.clear();
@@ -91,6 +92,7 @@ void PatternView::refresh()
     else
     {
         pattern_label.setAlpha(1.0f);
+        playback_control.setEnabled(false); // this forces setEnabled to be called on "true" even if it was already on true
         playback_control.setEnabled(true);
 
         more_options.clear();

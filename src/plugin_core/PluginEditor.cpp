@@ -33,6 +33,11 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
         resized();
     };
 
+    instrument_dropdown.on_change = [this](const Item<Instrument>& instrument)
+    {
+        processorRef.set_selected_instrument(instrument.id);
+    };
+
     page_view.get_pattern_list_view().on_import = [this](const PatternId id)
     {
         if (processorRef.get_pattern(id).has_empty_midi())
@@ -116,6 +121,12 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
             << LogText(" sent OSC message") << LogText(toString(osc_message)).highlight()
             << LogText("to") << LogText(ip.toString()).highlight()
         );
+    };
+    processorRef.on_preset_loaded = [this]()
+    {
+        instrument_dropdown.set_selected_item(processorRef.get_selected_instrument());
+        page_view.refresh();
+        update_status();
     };
 
     update_status();

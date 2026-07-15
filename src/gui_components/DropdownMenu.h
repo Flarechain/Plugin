@@ -18,7 +18,9 @@ public:
     void paint(juce::Graphics& g) override;
 
     void add_item(T id, juce::String text, bool selected);
+    void set_selected_item(Item<T> item);
     T get_selected_item() const;
+
     std::function<void(Item<T>)> on_change;
 
 private:
@@ -28,14 +30,18 @@ private:
     class DropdownItem : public juce::ToggleButton
     {
     public:
-        DropdownItem(const juce::String& text, int width);
+        DropdownItem(Item<T> item, int width);
 
         ~DropdownItem() override = default;
 
         void paintButton(juce::Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
 
+        Item<T> get_item() { return item; }
+
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DropdownItem)
+
+        Item<T> item;
 
         static constexpr int PADDING_X = 8;
         static constexpr int PADDING_Y = 2;
@@ -47,7 +53,6 @@ private:
 
     std::vector<std::unique_ptr<DropdownItem>> items;
 
-    void set_selected_item(Item<T> item);
     void clear();
 
     template<typename U>

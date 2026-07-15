@@ -115,6 +115,15 @@ void IpAddressField::resized()
     ip_label.setBounds(ip_label_area);
 }
 
+void IpAddressField::set_ip(const juce::IPAddress& ip_address)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        blocks[i] = ip_address.address[i];
+        block_fields[i].setText(juce::String(ip_address.address[i]), juce::dontSendNotification);
+    }
+}
+
 void IpAddressField::clear()
 {
     block_fields[0].clear();
