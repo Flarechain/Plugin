@@ -119,7 +119,12 @@ juce::String toString(const juce::OSCMessage& osc_message)
         const auto& arg = osc_message[i];
         if (arg.isInt32()) { string << " " << arg.getInt32(); }
         else if (arg.isFloat32()) { string << " " << arg.getFloat32(); }
-        else if (arg.isString()) { string << " " << arg.getString(); }
+        else if (arg.isString())
+        {
+            const auto str = arg.getString();
+            if (str.containsChar(' ')) { string << " \"" << str << "\""; }
+            else { string << " " << str; }
+        }
     }
 
     return string;
