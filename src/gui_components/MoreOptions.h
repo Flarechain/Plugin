@@ -25,9 +25,10 @@ private:
 
     MoreOptionsButton button;
     MoreOptionsMenu menu;
+    bool menu_open;
     static constexpr int GAP = 4;
 
-    void focusLost(FocusChangeType cause) override;
+    void mouseDown(const juce::MouseEvent& event) override;
     void open_menu();
     void close_menu();
 };

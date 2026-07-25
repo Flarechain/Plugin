@@ -27,6 +27,7 @@ FlarechainAudioProcessorEditor::FlarechainAudioProcessorEditor (FlarechainAudioP
 
     instrument_dropdown.add_item(Instrument::Keyboard, "Keyboard", false);
     instrument_dropdown.add_item(Instrument::Drums, "Drums", false);
+    instrument_dropdown.set_selected_item(processorRef.get_selected_instrument());
 
     preset_dropdown.on_change = [this](Item<PresetId> preset)
     {

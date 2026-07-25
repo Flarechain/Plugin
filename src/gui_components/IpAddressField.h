@@ -40,6 +40,7 @@ private:
         void paint(juce::Graphics& g) override;
         void focusLost(FocusChangeType cause) override;
         bool keyPressed(const juce::KeyPress& key) override;
+        void setText(const juce::String& newText, bool sendTextChangeMessage = true);
 
         std::function<void(std::optional<juce::uint8>)> on_change;
         std::function<void(const juce::KeyPress&)> on_arrow_key;

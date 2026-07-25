@@ -38,21 +38,21 @@ void TextField::paint(juce::Graphics& g)
 void TextField::focusLost(FocusChangeType cause)
 {
     juce::ignoreUnused(cause);
+    setText(getText(), juce::dontSendNotification);
+}
 
-    juce::String new_text;
+void TextField::setText(const juce::String& newText, bool sendTextChangeMessage)
+{
+    TextEditor::setText(newText, sendTextChangeMessage);
 
-    if (getText() == "")
+    if (newText == "")
     {
         clear();
     }
-    else
-    {
-        new_text = getText();
-    }
 
-    if (on_change && new_text != current_text)
+    if (on_change && newText != current_text)
     {
-        current_text = new_text;
+        current_text = newText;
         on_change(current_text);
     }
 }

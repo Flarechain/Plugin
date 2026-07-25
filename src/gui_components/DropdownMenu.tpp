@@ -35,17 +35,22 @@ void DropdownMenu<T>::add_item(T id, juce::String text, const bool selected)
     dropdown_item->setRadioGroupId(1);
     dropdown_item->onClick = [this, id, text]()
     {
-        set_selected_item(Item<T>{id, text});
+        const auto item = Item<T>{id, text};
+        selected_item = item;
+        for (const auto& x : items)
+        {
+            x->setToggleState(x->get_item().id == item.id, juce::dontSendNotification);
+        }
+        if (on_change) { on_change(item); }
     };
-
-    if (items.empty() || selected)
-    {
-        set_selected_item(Item<T>{id, text});
-        dropdown_item->triggerClick();
-    }
 
     items.push_back(std::move(dropdown_item));
     addAndMakeVisible(*items.back());
+
+    if (items.size() == 1 || selected)
+    {
+        set_selected_item(Item<T>{id, text});
+    }
 
     setSize(items.at(0)->getWidth() + PADDING * 2,
         items.at(0)->getHeight() * items.size() + PADDING * 2);
@@ -56,10 +61,12 @@ void DropdownMenu<T>::add_item(T id, juce::String text, const bool selected)
 template <typename T>
 void DropdownMenu<T>::set_selected_item(Item<T> item)
 {
-    if (selected_item == item) return;
-
     selected_item = item;
-    if (on_change) { on_change(item); }
+    for (const auto& x : items)
+    {
+        x->setToggleState(x->get_item().id == item.id, juce::dontSendNotification);
+        x->repaint();
+    }
 }
 
 template <typename T>

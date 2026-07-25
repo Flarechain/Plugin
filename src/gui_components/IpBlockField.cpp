@@ -40,18 +40,22 @@ void IpAddressField::IpBlockField::paint(juce::Graphics& g)
 void IpAddressField::IpBlockField::focusLost(FocusChangeType cause)
 {
     juce::ignoreUnused(cause);
+    setText(getText(), juce::dontSendNotification);
+}
 
+void IpAddressField::IpBlockField::setText(const juce::String& newText, bool sendTextChangeMessage)
+{
     std::optional<juce::uint8> new_value = std::nullopt;
 
-    if (getText() == "")
+    if (newText == "")
     {
         clear();
     }
     else
     {
-        int num = getText().getIntValue();
+        int num = newText.getIntValue();
         num = std::clamp(num, 0, 255);
-        setText(juce::String(num), juce::dontSendNotification);
+        juce::TextEditor::setText(juce::String(num), juce::dontSendNotification);
 
         new_value = static_cast<juce::uint8>(num);
     }

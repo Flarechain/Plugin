@@ -20,6 +20,8 @@ public:
     /// when the component loses keyboard focus.
     std::function<void(juce::String)> on_change;
 
+    void setText(const juce::String& newText, bool sendTextChangeMessage = true);
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextField)
 

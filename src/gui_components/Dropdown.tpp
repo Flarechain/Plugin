@@ -1,21 +1,14 @@
 #pragma once
 
 template <typename T>
-Dropdown<T>::Dropdown(int width, T default_item_id, juce::String default_item_text) : button(width, default_item_text), menu(width, default_item_id, default_item_text)
+Dropdown<T>::Dropdown(int width, T default_item_id, juce::String default_item_text) : button(width, default_item_text),
+    menu(width, default_item_id, default_item_text), menu_open(false)
 {
-    setWantsKeyboardFocus(true);
-
     selected_item = Item<T>{default_item_id, default_item_text};
     button.onClick = [this]()
     {
-        if (menu.isVisible())
-        {
-            close_menu();
-        }
-        else
-        {
-            open_menu();
-        }
+        if (menu_open) { close_menu(); }
+        else { open_menu(); }
     };
 
     menu.on_change = [this](Item<T> item)
@@ -44,7 +37,8 @@ void Dropdown<T>::set_selected_item(T item)
         if (x.get()->get_item().id == item)
         {
             selected_item = x.get()->get_item();
-            x.get()->triggerClick();
+            button.setButtonText(selected_item.label);
+            menu.set_selected_item(selected_item);
         }
     }
 }
@@ -56,18 +50,9 @@ T Dropdown<T>::get_selected_item() const
 }
 
 template <typename T>
-void Dropdown<T>::focusLost(FocusChangeType cause)
-{
-    juce::ignoreUnused(cause);
-
-    // if focus is taken by other components (but not by DropdownButton), close DropdownMenu
-    // Note: DropdownButton already closes the menu on click, not on focus gained
-    if (!isMouseOver(true)) { close_menu(); }
-}
-
-template <typename T>
 void Dropdown<T>::open_menu()
 {
+    menu_open = true;
     auto top_component = getTopLevelComponent();
     const auto button_bounds = button.getLocalBounds();
 
@@ -81,12 +66,27 @@ void Dropdown<T>::open_menu()
     );
 
     menu.toFront(true);
-    grabKeyboardFocus();
+    juce::Desktop::getInstance().addGlobalMouseListener(this);
 }
 
 template <typename T>
 void Dropdown<T>::close_menu()
 {
+    menu_open = false;
     menu.setVisible(false);
-    menu.giveAwayKeyboardFocus();
+    juce::Desktop::getInstance().removeGlobalMouseListener(this);
+}
+
+template <typename T>
+void Dropdown<T>::mouseDown(const juce::MouseEvent& event)
+{
+    const auto pos = event.getEventRelativeTo(getTopLevelComponent()).getPosition();
+    const auto menu_bounds = menu.getBounds();
+    const auto button_bounds_in_top = getTopLevelComponent()->getLocalPoint(&button, button.getLocalBounds().getTopLeft());
+    const auto button_rect = juce::Rectangle<int>(button_bounds_in_top.getX(), button_bounds_in_top.getY(), button.getWidth(), button.getHeight());
+
+    if (!menu_bounds.contains(pos) && !button_rect.contains(pos))
+    {
+        close_menu();
+    }
 }

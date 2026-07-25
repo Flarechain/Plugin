@@ -1,19 +1,11 @@
 #include "MoreOptions.h"
 
-MoreOptions::MoreOptions(const int menu_width) : menu(menu_width)
+MoreOptions::MoreOptions(const int menu_width) : menu(menu_width), menu_open(false)
 {
-    setWantsKeyboardFocus(true);
-
     button.onClick = [this]()
     {
-        if (menu.isVisible())
-        {
-            close_menu();
-        }
-        else
-        {
-            open_menu();
-        }
+        if (menu_open) { close_menu(); }
+        else { open_menu(); }
     };
 
     addAndMakeVisible(button);
@@ -22,7 +14,11 @@ MoreOptions::MoreOptions(const int menu_width) : menu(menu_width)
 
 void MoreOptions::add_item(const juce::String& item_text, Icon item_icon, const std::function<void()>& on_click)
 {
-    menu.add_item(item_text, std::move(item_icon), on_click);
+    menu.add_item(item_text, std::move(item_icon), [this, on_click]()
+    {
+        close_menu();
+        juce::MessageManager::callAsync(on_click);
+    });
 }
 
 void MoreOptions::clear()
@@ -30,17 +26,9 @@ void MoreOptions::clear()
     menu.clear();
 }
 
-void MoreOptions::focusLost(FocusChangeType cause)
-{
-    juce::ignoreUnused(cause);
-
-    // if focus is taken by other components (but not by MoreOptionsButton), close MoreOptionsMenu
-    // Note: MoreOptionsButton already closes the menu on click, not on focus gained
-    if (!isMouseOver(true)) { close_menu(); }
-}
-
 void MoreOptions::open_menu()
 {
+    menu_open = true;
     const auto top_component = getTopLevelComponent();
     const auto button_bounds = button.getLocalBounds();
 
@@ -54,11 +42,25 @@ void MoreOptions::open_menu()
     );
 
     menu.toFront(true);
-    grabKeyboardFocus();
+    juce::Desktop::getInstance().addGlobalMouseListener(this);
 }
 
 void MoreOptions::close_menu()
 {
+    menu_open = false;
     menu.setVisible(false);
-    menu.giveAwayKeyboardFocus();
+    juce::Desktop::getInstance().removeGlobalMouseListener(this);
+}
+
+void MoreOptions::mouseDown(const juce::MouseEvent& event)
+{
+    const auto pos = event.getEventRelativeTo(getTopLevelComponent()).getPosition();
+    const auto menu_bounds = menu.getBounds();
+    const auto button_bounds_in_top = getTopLevelComponent()->getLocalPoint(&button, button.getLocalBounds().getTopLeft());
+    const auto button_rect = juce::Rectangle<int>(button_bounds_in_top.getX(), button_bounds_in_top.getY(), button.getWidth(), button.getHeight());
+
+    if (!menu_bounds.contains(pos) && !button_rect.contains(pos))
+    {
+        close_menu();
+    }
 }
